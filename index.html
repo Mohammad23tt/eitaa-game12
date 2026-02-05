@@ -76,6 +76,19 @@
       box-shadow: 0 10px 30px -10px rgba(0,0,0,0.05);
       position: relative; z-index: 10;
     }
+    
+    .header-settings-btn {
+        position: absolute; top: 20px; left: 20px;
+        width: 40px; height: 40px;
+        background: rgba(255,255,255,0.9);
+        border-radius: 12px;
+        display: flex; align-items: center; justify-content: center;
+        cursor: pointer; color: var(--text-light);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        transition: transform 0.2s;
+    }
+    .header-settings-btn:active { transform: scale(0.9); }
+
     .avatar-box {
       width: 80px; height: 80px;
       background: linear-gradient(135deg, var(--primary), var(--primary-dark));
@@ -84,6 +97,12 @@
       margin: 0 auto 12px;
       box-shadow: 0 8px 20px rgba(0,0,0,0.15); transform: rotate(-5deg);
     }
+    .user-level-badge {
+      display: inline-block; background: #E0E7FF; color: #4338ca;
+      padding: 4px 12px; border-radius: 20px;
+      font-size: 0.85rem; font-weight: bold; margin-top: 5px;
+      border: 1px solid #c7d2fe;
+    }
     .stats-row { display: flex; justify-content: center; gap: 2rem; margin-top: 1.5rem; margin-bottom: 1rem; }
     .stat-box { text-align: center; }
     .stat-num { font-size: 1.25rem; font-weight: 800; color: var(--text); }
@@ -91,12 +110,13 @@
 
     /* تبلیغات */
     .ad-container {
-      margin: 1.5rem;
+      margin: 2rem 1.5rem; /* فاصله از بالا 2rem */
       background: linear-gradient(135deg, #6366f1, #8b5cf6);
       border-radius: 20px; padding: 1rem; color: white;
       position: relative; overflow: hidden; cursor: pointer;
       box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
       display: flex; align-items: center; gap: 15px;
+      /* margin-top: auto;  <-- حذف شد تا بالا بیاید */
     }
     .ad-container::before {
       content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
@@ -156,15 +176,30 @@
     .help-btn-icon { color: #f59e0b; filter: drop-shadow(0 0 2px rgba(245, 158, 11, 0.5)); animation: float 3s infinite; }
     @keyframes float { 0% { transform: translateY(0); } 50% { transform: translateY(-3px); } 100% { transform: translateY(0); } }
 
+    /* جدول امتیازات */
+    .stats-container { padding: 1.5rem; }
+    .stats-table { width: 100%; border-collapse: separate; border-spacing: 0 10px; }
+    .st-row { background: var(--surface); box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: transform 0.2s; }
+    .st-row td { padding: 15px; }
+    .st-row td:first-child { border-top-right-radius: 16px; border-bottom-right-radius: 16px; font-weight: bold; }
+    .st-row td:last-child { border-top-left-radius: 16px; border-bottom-left-radius: 16px; text-align: left; }
+    .st-val { font-weight: bold; margin-left: 5px; }
+    .st-win { color: var(--success); }
+    .st-lose { color: var(--danger); }
+
     /* تنظیمات بازی (مشترک) */
-    .setup-group { margin-bottom: 1.5rem; }
-    .setup-title { display: block; font-weight: bold; margin-bottom: 0.8rem; color: var(--text); }
-    .toggle-container { display: flex; background: var(--border); padding: 4px; border-radius: 16px; }
+    .setup-group { margin-bottom: 1.5rem; text-align: center; } 
+    .setup-title { display: block; font-weight: bold; margin-bottom: 0.8rem; color: var(--text); text-align: center; }
+    .toggle-container { display: flex; background: var(--border); padding: 4px; border-radius: 16px; justify-content: center; }
     .toggle-btn { flex: 1; padding: 10px; text-align: center; border-radius: 12px; cursor: pointer; font-weight: bold; font-size: 0.9rem; transition: all 0.2s; color: var(--text-light); }
     .toggle-btn.active { background: var(--surface); color: var(--primary); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
 
-    /* برد بازی دوز */
-    .xo-area { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    /* برد بازی دوز - وسط */
+    .xo-area { 
+        flex: 1; display: flex; flex-direction: column; align-items: center; 
+        justify-content: center; 
+        padding: 1rem;
+    }
     .board {
       display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
       background: var(--surface); padding: 10px; border-radius: 24px;
@@ -179,16 +214,19 @@
     .cell.x { color: var(--primary); }
     .cell.o { color: var(--accent); }
 
-    /* بازی حافظه */
-    .memory-area { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 1rem; }
+    /* بازی حافظه - وسط */
+    .memory-area { 
+        flex: 1; display: flex; flex-direction: column; align-items: center; 
+        justify-content: center;
+        padding: 1rem;
+    }
     .memory-grid {
       display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
       width: 100%; max-width: 340px; 
-      /* Aspect ratio removed to support variable rows */
     }
     .memory-card { 
         background: transparent; perspective: 1000px; cursor: pointer; border-radius: 12px; 
-        aspect-ratio: 1; /* کارت‌ها همیشه مربعی باشند */
+        aspect-ratio: 1; 
     }
     .memory-inner {
       position: relative; width: 100%; height: 100%; text-align: center;
@@ -207,11 +245,16 @@
     .mem-back { background: var(--primary); color: white; font-size: 1.2rem; }
 
     /* بازی ریاضی */
-    .math-area { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 1.5rem; width: 100%; }
+    .math-area { 
+        flex: 1; display: flex; flex-direction: column; align-items: center; 
+        justify-content: center; 
+        padding: 1.5rem; width: 100%; 
+        padding-bottom: 20%; 
+    }
     .math-header { display: flex; justify-content: space-between; width: 100%; margin-bottom: 1rem; font-weight: bold; color: var(--text-light); }
     .math-level-badge { background: var(--accent); color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.9rem; }
-    .math-question { font-size: 3rem; font-weight: 900; margin-bottom: 2rem; color: var(--text); direction: ltr; }
-    .math-timer-bar { width: 100%; height: 10px; background: var(--border); border-radius: 5px; overflow: hidden; margin-bottom: 2rem; }
+    .math-question { font-size: 3rem; font-weight: 900; margin-bottom: 1.5rem; color: var(--text); direction: ltr; }
+    .math-timer-bar { width: 100%; height: 10px; background: var(--border); border-radius: 5px; overflow: hidden; margin-bottom: 1.5rem; }
     .math-timer-fill { height: 100%; background: var(--primary); width: 100%; transition: width 0.1s linear; }
     .math-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; width: 100%; }
     .math-btn {
@@ -237,7 +280,10 @@
     .help-text { color: var(--text); line-height: 1.6; margin-bottom: 1.5rem; }
 
     /* تنظیمات */
-    .settings-section { background: var(--surface); border-radius: 20px; padding: 1.5rem; margin-bottom: 1rem; }
+    .settings-section { 
+        background: var(--surface); border-radius: 20px; padding: 1.5rem; margin-bottom: 1rem;
+        display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+    }
     .color-grid { display: flex; gap: 10px; justify-content: space-between; }
     .color-circle { width: 45px; height: 45px; border-radius: 50%; cursor: pointer; position: relative; transition: transform 0.2s; }
     .color-circle.active::after { content: '✓'; color: white; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
@@ -260,11 +306,16 @@
     <!-- === صفحه 1: داشبورد === -->
     <div id="view-dashboard" class="view active">
       <div class="profile-header">
+        <!-- آیکون تنظیمات در هدر (بالا سمت چپ) -->
+        <div class="header-settings-btn" onclick="showView('view-settings')">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.09a2 2 0 0 1-1-1.74v-.47a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+        </div>
+
         <div class="avatar-box">
           <svg class="icon icon-lg" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
         </div>
         <h2 id="username" style="color: var(--text);">کاربر ایتا</h2>
-        <div style="font-size: 0.85rem; color: var(--text-light); margin-top: 4px;">سطح: مقدماتی</div>
+        <div id="userLevel" class="user-level-badge">تازه کار</div>
         
         <div class="stats-row">
           <div class="stat-box">
@@ -284,10 +335,9 @@
           شروع بازی جدید
         </button>
         
-        <!-- آیکون چرخ‌دنده برای تنظیمات -->
-        <button class="btn btn-sec" onclick="showView('view-settings')">
-          <svg class="icon" viewBox="0 0 24 24"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.09a2 2 0 0 1-1-1.74v-.47a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
-          تنظیمات
+        <button class="btn btn-sec" onclick="showView('view-stats')">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+          جدول امتیازات
         </button>
 
         <button class="btn btn-sec btn-support" onclick="showView('view-support')">
@@ -304,6 +354,38 @@
           <p>برای دریافت جوایز عضو شوید!</p>
         </div>
         <div class="ad-arrow">←</div>
+      </div>
+    </div>
+
+    <!-- === صفحه جدید: جدول امتیازات (Stats) === -->
+    <div id="view-stats" class="view">
+      <div class="top-nav">
+        <div class="nav-btn" onclick="showView('view-dashboard')"><svg class="icon" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></div>
+        <span>آمار بازی‌ها</span><div style="width: 40px;"></div>
+      </div>
+      <div class="stats-container">
+        <div class="settings-section">
+          <table class="stats-table">
+            <tr class="st-row">
+              <td>دوز (XO)</td>
+              <td><span class="st-val st-win" id="st-xo-w">0</span> برد</td>
+              <td><span class="st-val st-lose" id="st-xo-l">0</span> باخت</td>
+            </tr>
+            <tr class="st-row">
+              <td>حافظه</td>
+              <td><span class="st-val st-win" id="st-mem-w">0</span> برد</td>
+              <td><span class="st-val st-lose" id="st-mem-l">0</span> باخت</td>
+            </tr>
+            <tr class="st-row">
+              <td>ریاضی</td>
+              <td><span class="st-val st-win" id="st-math-w">0</span> برد</td>
+              <td><span class="st-val st-lose" id="st-math-l">0</span> باخت</td>
+            </tr>
+          </table>
+        </div>
+        <div style="text-align:center; margin-top:20px; color:var(--text-light); font-size:0.9rem;">
+          <p>سطح شما بر اساس تفاضل برد و باخت محاسبه می‌شود.</p>
+        </div>
       </div>
     </div>
 
@@ -324,7 +406,7 @@
           <svg class="icon" style="color: var(--text-light);" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
         </div>
 
-        <!-- بازی حافظه - آیکون مغز (جدید) -->
+        <!-- بازی حافظه - آیکون مغز -->
         <div class="game-card" onclick="openMemoryMenu()">
           <div class="game-icon-box" style="background: #E0E7FF; color: #4338ca;">
             <svg class="icon icon-lg" viewBox="0 0 24 24"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"/></svg>
@@ -377,28 +459,28 @@
       </div>
     </div>
 
-    <!-- === صفحه انتخاب سطح حافظه (جدید) === -->
+    <!-- === صفحه انتخاب سطح حافظه === -->
     <div id="view-memory-setup" class="view">
         <div class="top-nav">
           <div class="nav-btn" onclick="showView('view-games')"><svg class="icon" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></div>
           <span>تنظیمات حافظه</span><div style="width: 40px;"></div>
         </div>
         <div style="padding: 2rem; display: flex; flex-direction: column; gap: 1rem; flex: 1; justify-content: center;">
-          <div class="settings-section">
+          <div class="settings-section" style="margin-bottom: 2rem;">
             <span class="setup-title">سطح دشواری</span>
             <div class="toggle-container">
                 <div class="toggle-btn active" id="mem-easy" onclick="setMemDifficulty('easy')">آسان</div>
                 <div class="toggle-btn" id="mem-medium" onclick="setMemDifficulty('medium')">متوسط</div>
                 <div class="toggle-btn" id="mem-hard" onclick="setMemDifficulty('hard')">سخت</div>
             </div>
+            
+            <button class="btn" onclick="launchMemoryGame()" style="height: auto; padding: 1.2rem; justify-content: center; margin-top: 1.5rem;">
+                <div style="display:flex; align-items:center; gap:10px;">
+                  <span>شروع بازی</span>
+                  <svg class="icon" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+                </div>
+            </button>
           </div>
-          <button class="btn" onclick="launchMemoryGame()" style="height: auto; padding: 1.5rem; justify-content: space-between;">
-            <div style="display:flex; align-items:center; gap:12px;">
-              <div style="background:rgba(255,255,255,0.2); padding:8px; border-radius:12px;"><svg class="icon" viewBox="0 0 24 24"><path d="M5 3v18"/><path d="M19 3v18"/><path d="M5 9h14"/><path d="M5 15h14"/></svg></div>
-              <div style="text-align: right;"><div style="font-size: 1.1rem;">شروع بازی</div><div style="font-size: 0.8rem; opacity: 0.8; font-weight: normal;">پیدا کردن کارت‌ها</div></div>
-            </div>
-            <svg class="icon" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
-          </button>
         </div>
       </div>
 
@@ -422,7 +504,7 @@
       <div class="top-nav">
         <div class="nav-btn" onclick="showView('view-memory-setup')"><svg class="icon" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></div>
         <span id="memStatus">پیدا کردن جفت‌ها</span>
-        <!-- دکمه راهنمای جدید (لامپ) -->
+        <!-- دکمه راهنما (لامپ) -->
         <div class="nav-btn" onclick="showHelp('memory')">
           <svg class="icon help-btn-icon" viewBox="0 0 24 24"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2v1"/><path d="M12 7v.01"/><path d="M12 11v.01"/><path d="M15.5 12.5a3.5 3.5 0 1 0-7 0c0 3 2.5 4 3.5 5.5h.01c.9-1.5 3.5-2.5 3.5-5.5Z"/></svg>
         </div>
@@ -440,7 +522,7 @@
       <div class="top-nav">
         <div class="nav-btn" onclick="showView('view-math-mode')"><svg class="icon" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></div>
         <span>نبرد ریاضی</span>
-        <!-- دکمه راهنمای جدید (لامپ) -->
+        <!-- دکمه راهنما (لامپ) -->
         <div class="nav-btn" onclick="showHelp('math')">
           <svg class="icon help-btn-icon" viewBox="0 0 24 24"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2v1"/><path d="M12 7v.01"/><path d="M12 11v.01"/><path d="M15.5 12.5a3.5 3.5 0 1 0-7 0c0 3 2.5 4 3.5 5.5h.01c.9-1.5 3.5-2.5 3.5-5.5Z"/></svg>
         </div>
@@ -469,8 +551,10 @@
         <div class="settings-section">
           <div class="setup-group"><span class="setup-title">انتخاب مهره شما</span><div class="toggle-container"><div class="toggle-btn active" id="btn-player-x" onclick="setPlayerSymbol('X')">X (شروع)</div><div class="toggle-btn" id="btn-player-o" onclick="setPlayerSymbol('O')">O (نفر دوم)</div></div></div>
           <div class="setup-group" id="difficulty-group"><span class="setup-title">سطح دشواری ربات</span><div class="toggle-container"><div class="toggle-btn active" id="diff-easy" onclick="setDifficulty('easy')">آسان</div><div class="toggle-btn" id="diff-medium" onclick="setDifficulty('medium')">متوسط</div><div class="toggle-btn" id="diff-hard" onclick="setDifficulty('hard')">سخت</div></div></div>
+          
+          <!-- دکمه شروع بازی داخل تنظیمات -->
+          <button class="btn" onclick="launchGame()" style="margin-top: 1.5rem;">شروع بازی 🚀</button>
         </div>
-        <button class="btn" onclick="launchGame()" style="margin-top: auto;">شروع بازی 🚀</button>
       </div>
     </div>
 
@@ -495,7 +579,7 @@
       <div style="padding: 1.5rem;">
         <div class="settings-section"><span class="settings-title">رنگ اصلی برنامه</span><div class="color-grid"><div class="color-circle" style="background: #FF9F1C;" onclick="setColor('#FF9F1C', this)"></div><div class="color-circle" style="background: #3B82F6;" onclick="setColor('#3B82F6', this)"></div><div class="color-circle" style="background: #8B5CF6;" onclick="setColor('#8B5CF6', this)"></div><div class="color-circle" style="background: #10B981;" onclick="setColor('#10B981', this)"></div><div class="color-circle" style="background: #EF4444;" onclick="setColor('#EF4444', this)"></div></div></div>
         <div class="settings-section"><span class="settings-title">تم برنامه</span><div class="theme-grid"><div class="theme-card active" id="theme-light" onclick="setTheme('light')"><div class="theme-preview" style="background: #F0F4F8;"></div><div>روز (روشن)</div></div><div class="theme-card" id="theme-dark" onclick="setTheme('dark')"><div class="theme-preview" style="background: #102A43;"></div><div>شب (تاریک)</div></div></div></div>
-        <div style="text-align: center; color: var(--text-light); font-size: 0.8rem; margin-top: 1rem;">نسخه 2.1.0</div>
+        <div style="text-align: center; color: var(--text-light); font-size: 0.8rem; margin-top: 1rem;">نسخه 3.3.0</div>
       </div>
     </div>
 
@@ -513,7 +597,6 @@
   </div>
 
   <script>
-    // --- Eitaa SDK Integration ---
     const WebApp = window.Eitaa?.WebApp || window.Telegram?.WebApp;
     
     // Icons
@@ -523,21 +606,41 @@
     function playSound() { try { const c=new (window.AudioContext||window.webkitAudioContext),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=600;g.gain.value=0.05;o.start();setTimeout(()=>{o.stop();c.close()},50) }catch(e){} }
 
     // --- State Management (Wins/Losses) ---
-    let wins = parseInt(localStorage.getItem('userWins')) || 0;
-    let losses = parseInt(localStorage.getItem('userLosses')) || 0;
+    let stats = JSON.parse(localStorage.getItem('userStats')) || {
+        xo: {w:0, l:0},
+        memory: {w:0, l:0},
+        math: {w:0, l:0}
+    };
+
+    function saveStats() { localStorage.setItem('userStats', JSON.stringify(stats)); updateStatsUI(); }
+
+    function getLevelTitle(score) {
+        if(score < 0) return "تازه کار";
+        if(score < 50) return "مبتدی";
+        if(score < 150) return "کاربلد";
+        if(score < 300) return "حرفه‌ای";
+        if(score < 600) return "استاد";
+        if(score < 1000) return "قهرمان";
+        return "افسانه";
+    }
 
     function updateStatsUI() {
-        document.getElementById('statWins').innerText = wins;
-        document.getElementById('statLosses').innerText = losses;
+        const totalWins = stats.xo.w + stats.memory.w + stats.math.w;
+        const totalLosses = stats.xo.l + stats.memory.l + stats.math.l;
+        const score = (totalWins * 10) - (totalLosses * 5); // Formula
+        
+        document.getElementById('statWins').innerText = totalWins;
+        document.getElementById('statLosses').innerText = totalLosses;
+        document.getElementById('userLevel').innerText = getLevelTitle(score);
+
+        // Update Table
+        document.getElementById('st-xo-w').innerText = stats.xo.w; document.getElementById('st-xo-l').innerText = stats.xo.l;
+        document.getElementById('st-mem-w').innerText = stats.memory.w; document.getElementById('st-mem-l').innerText = stats.memory.l;
+        document.getElementById('st-math-w').innerText = stats.math.w; document.getElementById('st-math-l').innerText = stats.math.l;
     }
 
-    function addWin() {
-        wins++; localStorage.setItem('userWins', wins); updateStatsUI();
-    }
-
-    function addLoss() {
-        losses++; localStorage.setItem('userLosses', losses); updateStatsUI();
-    }
+    function addWin(game) { stats[game].w++; saveStats(); }
+    function addLoss(game) { stats[game].l++; saveStats(); }
 
     if (WebApp) {
       WebApp.ready(); WebApp.expand();
@@ -546,7 +649,7 @@
       WebApp.BackButton.onClick(() => {
         playSound();
         const active = document.querySelector('.view.active').id;
-        if (['view-settings','view-support','view-games','view-memory','view-math','view-math-mode','view-memory-setup'].includes(active)) showView('view-dashboard', false);
+        if (['view-settings','view-support','view-games','view-memory','view-math','view-math-mode','view-memory-setup','view-stats'].includes(active)) showView('view-dashboard', false);
         else if (active === 'view-xo-mode') showView('view-games', false);
         else if (active === 'view-xo-setup') showView('view-xo-mode', false);
         else if (active === 'view-xo') showView('view-xo-setup', false);
@@ -576,7 +679,7 @@
       const c = localStorage.getItem('appColor')||'#FF9F1C', t = localStorage.getItem('appTheme')||'light';
       const temp=playSound; playSound=()=>{}; setColor(c); setTheme(t); playSound=temp;
       const circles = document.querySelectorAll('.color-circle'); circles.forEach(ci => { if(ci.style.background.includes(c) || (c==='#FF9F1C' && ci.style.background.includes('255, 159'))) ci.classList.add('active'); });
-      updateStatsUI(); 
+      updateStatsUI(); // Load stats on start
     });
 
     // --- Help System ---
@@ -632,10 +735,10 @@
         if (gameMode === 'ai') {
             if (currentPlayer === userSymbol) {
                 winnerName = '🎉 شما بردید!';
-                addWin(); // Win for User
+                addWin('xo'); 
             } else {
                 winnerName = '🤖 ربات برد!';
-                addLoss(); // Loss for User
+                addLoss('xo'); 
             }
         }
         document.getElementById('xoStatus').innerText = winnerName; active = false; 
@@ -694,7 +797,6 @@
       else if (memoryDifficulty === 'medium') pairCount = 8;
       else pairCount = 10;
 
-      // Select random emojis
       const shuffledPool = [...emojiPool].sort(() => 0.5 - Math.random());
       const selectedEmojis = shuffledPool.slice(0, pairCount);
       memCards = [...selectedEmojis, ...selectedEmojis].sort(() => 0.5 - Math.random());
@@ -702,10 +804,9 @@
       const board = document.getElementById('memoryBoard');
       board.innerHTML = '';
       
-      // Update grid layout for difficulty
       if (memoryDifficulty === 'easy') board.style.gridTemplateColumns = 'repeat(3, 1fr)';
       else if (memoryDifficulty === 'medium') board.style.gridTemplateColumns = 'repeat(4, 1fr)';
-      else board.style.gridTemplateColumns = 'repeat(4, 1fr)'; // 20 cards (5 rows)
+      else board.style.gridTemplateColumns = 'repeat(4, 1fr)'; 
 
       memCards.forEach((emoji, index) => {
         const card = document.createElement('div');
@@ -732,7 +833,7 @@
           memFlipped = [];
           if (memMatched.length === memCards.length) { 
               document.getElementById('memStatus').innerText = '🎉 عالی بود!';
-              addWin(); 
+              addWin('memory'); 
               setTimeout(launchMemoryGame, 2000);
           }
         } else {
@@ -815,7 +916,7 @@
             mathLevel++;
             document.getElementById('mathLevel').innerText = mathLevel;
             showToast('سطح ارتقا یافت! 🚀');
-            if (mathScoreVal === 20) addWin(); // Bonus Win for passing level 5
+            if (mathScoreVal === 20) addWin('math'); 
         }
 
         mathTimeLeft = Math.min(100, mathTimeLeft + (mathMode==='hard'?15:20)); 
@@ -826,7 +927,7 @@
     }
     function endGameMath() {
       clearInterval(mathTimerInterval);
-      addLoss(); // Loss for Math
+      addLoss('math'); 
       showToast(`بازی تمام شد! امتیاز: ${mathScoreVal}`);
       setTimeout(() => showView('view-games'), 2000);
     }
