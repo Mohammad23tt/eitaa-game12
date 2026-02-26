@@ -1,938 +1,1535 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>گیم سنتر ایتا</title>
-  
-  <script src="https://developer.eitaa.com/eitaa-web-app.js"></script>
-  
-  <style>
-    @import url('https://cdn.jsdelivr.net/gh/rastikerdar/mikhak-font/dist/Mikhak.css');
-
-    :root {
-      --primary: #FF9F1C; 
-      --primary-dark: #e08605;
-      --accent: #2EC4B6;
-      --bg: #F0F4F8;
-      --surface: #ffffff;
-      --text: #102A43;
-      --text-light: #627D98;
-      --border: #e2e8f0;
-      --radius: 20px;
-      --success: #10B981;
-      --danger: #EF4444;
-    }
-
-    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-
-    body {
-      font-family: 'Mikhak', sans-serif;
-      background-color: #121212;
-      height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      transition: background-color 0.3s;
-    }
-
-    .app-wrapper {
-      width: 100%; height: 100%;
-      max-width: 420px; max-height: 900px;
-      background: var(--bg);
-      position: relative;
-      overflow: hidden;
-      display: flex; flex-direction: column;
-      box-shadow: 0 0 40px rgba(0,0,0,0.5);
-      transition: background-color 0.3s;
-    }
-
-    @media (max-width: 450px) {
-      .app-wrapper { max-width: 100%; max-height: 100%; border-radius: 0; }
-    }
-
-    .icon { width: 24px; height: 24px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
-    .icon-lg { width: 48px; height: 48px; stroke-width: 1.5; }
-    .icon-fill { fill: currentColor; stroke: none; }
-
-    .view {
-      position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-      background: var(--bg);
-      display: none; flex-direction: column;
-      overflow-y: auto;
-      animation: fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .view.active { display: flex; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-    /* هدر */
-    .profile-header {
-      background: var(--surface);
-      padding: 2rem 1.5rem 1rem;
-      border-bottom-left-radius: 30px;
-      border-bottom-right-radius: 30px;
-      text-align: center;
-      box-shadow: 0 10px 30px -10px rgba(0,0,0,0.05);
-      position: relative; z-index: 10;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0d1f17">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>أصول الدين والصلاة</title>
     
-    .header-settings-btn {
-        position: absolute; top: 20px; left: 20px;
-        width: 40px; height: 40px;
-        background: rgba(255,255,255,0.9);
-        border-radius: 12px;
-        display: flex; align-items: center; justify-content: center;
-        cursor: pointer; color: var(--text-light);
-        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-        transition: transform 0.2s;
-    }
-    .header-settings-btn:active { transform: scale(0.9); }
-
-    .avatar-box {
-      width: 80px; height: 80px;
-      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-      color: white; border-radius: 24px;
-      display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 12px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.15); transform: rotate(-5deg);
-    }
-    .user-level-badge {
-      display: inline-block; background: #E0E7FF; color: #4338ca;
-      padding: 4px 12px; border-radius: 20px;
-      font-size: 0.85rem; font-weight: bold; margin-top: 5px;
-      border: 1px solid #c7d2fe;
-    }
-    .stats-row { display: flex; justify-content: center; gap: 2rem; margin-top: 1.5rem; margin-bottom: 1rem; }
-    .stat-box { text-align: center; }
-    .stat-num { font-size: 1.25rem; font-weight: 800; color: var(--text); }
-    .stat-label { font-size: 0.8rem; color: var(--text-light); }
-
-    /* تبلیغات */
-    .ad-container {
-      margin: 2rem 1.5rem; /* فاصله از بالا 2rem */
-      background: linear-gradient(135deg, #6366f1, #8b5cf6);
-      border-radius: 20px; padding: 1rem; color: white;
-      position: relative; overflow: hidden; cursor: pointer;
-      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
-      display: flex; align-items: center; gap: 15px;
-      /* margin-top: auto;  <-- حذف شد تا بالا بیاید */
-    }
-    .ad-container::before {
-      content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-      animation: shine 3s infinite;
-    }
-    @keyframes shine { 100% { left: 100%; } }
-    .ad-badge {
-      position: absolute; top: 0; left: 0; background: #EF4444; color: white;
-      font-size: 0.6rem; padding: 2px 8px; border-bottom-right-radius: 10px; font-weight: bold;
-    }
-    .ad-icon { background: rgba(255,255,255,0.2); width: 45px; height: 45px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
-    .ad-content h4 { font-size: 0.95rem; margin-bottom: 2px; }
-    .ad-content p { font-size: 0.75rem; opacity: 0.9; }
-    .ad-arrow { margin-right: auto; font-size: 1.2rem; }
-
-    .mini-ad {
-      width: 100%; max-width: 320px; margin-top: 15px;
-      background: linear-gradient(90deg, #ff512f, #dd2476);
-      border-radius: 16px; padding: 10px 15px;
-      display: flex; align-items: center; justify-content: space-between;
-      color: white; cursor: pointer; font-size: 0.85rem; font-weight: bold;
-      box-shadow: 0 4px 10px rgba(221, 36, 118, 0.3);
-      animation: pulse 2s infinite;
-    }
-    @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
-
-    /* لیست و دکمه‌ها */
-    .menu-list { padding: 0 1.5rem; display: flex; flex-direction: column; gap: 1rem; }
-    .games-list { padding: 1.5rem; display: grid; gap: 1rem; }
-    .game-card {
-      background: var(--surface); border-radius: 24px; padding: 1.2rem;
-      display: flex; align-items: center; gap: 1rem;
-      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); cursor: pointer;
-      transition: all 0.2s; border: 1px solid transparent;
-    }
-    .game-card:active { transform: scale(0.98); }
-    .game-card:hover { border-color: var(--primary); }
-    .game-icon-box { width: 56px; height: 56px; border-radius: 18px; display: flex; align-items: center; justify-content: center; color: white; }
-    .game-card.locked { opacity: 0.6; filter: grayscale(1); }
-    .badge-soon { background: #EF4444; color: white; font-size: 0.6rem; padding: 4px 10px; border-radius: 12px; margin-right: auto; font-weight: bold; }
-
-    .btn {
-      width: 100%; padding: 1.1rem; border: none; border-radius: 18px;
-      font-family: inherit; font-weight: 700; font-size: 1rem;
-      background: var(--primary); color: white; cursor: pointer;
-      display: flex; align-items: center; justify-content: center; gap: 10px;
-      box-shadow: 0 8px 20px -5px rgba(0,0,0,0.15); transition: transform 0.2s;
-    }
-    .btn:active { transform: scale(0.98); }
-    .btn-sec { background: var(--surface); color: var(--text); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); border: 1px solid var(--border); }
-    .btn-support { background: #E0E7FF; color: #4338ca; border: 1px solid #c7d2fe; }
-
-    .top-nav { padding: 1.2rem 1.5rem; display: flex; align-items: center; justify-content: space-between; font-weight: 800; font-size: 1.1rem; color: var(--text); }
-    .nav-btn { background: var(--surface); width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+    <link rel="manifest" href="data:application/json,{&quot;name&quot;:&quot;أصول الدين والصلاة&quot;,&quot;short_name&quot;:&quot;أصول الدين&quot;,&quot;start_url&quot;:&quot;.&quot;,&quot;display&quot;:&quot;standalone&quot;,&quot;background_color&quot;:&quot;#0d1f17&quot;,&quot;theme_color&quot;:&quot;#0d1f17&quot;}">
     
-    .help-btn-icon { color: #f59e0b; filter: drop-shadow(0 0 2px rgba(245, 158, 11, 0.5)); animation: float 3s infinite; }
-    @keyframes float { 0% { transform: translateY(0); } 50% { transform: translateY(-3px); } 100% { transform: translateY(0); } }
-
-    /* جدول امتیازات */
-    .stats-container { padding: 1.5rem; }
-    .stats-table { width: 100%; border-collapse: separate; border-spacing: 0 10px; }
-    .st-row { background: var(--surface); box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: transform 0.2s; }
-    .st-row td { padding: 15px; }
-    .st-row td:first-child { border-top-right-radius: 16px; border-bottom-right-radius: 16px; font-weight: bold; }
-    .st-row td:last-child { border-top-left-radius: 16px; border-bottom-left-radius: 16px; text-align: left; }
-    .st-val { font-weight: bold; margin-left: 5px; }
-    .st-win { color: var(--success); }
-    .st-lose { color: var(--danger); }
-
-    /* تنظیمات بازی (مشترک) */
-    .setup-group { margin-bottom: 1.5rem; text-align: center; } 
-    .setup-title { display: block; font-weight: bold; margin-bottom: 0.8rem; color: var(--text); text-align: center; }
-    .toggle-container { display: flex; background: var(--border); padding: 4px; border-radius: 16px; justify-content: center; }
-    .toggle-btn { flex: 1; padding: 10px; text-align: center; border-radius: 12px; cursor: pointer; font-weight: bold; font-size: 0.9rem; transition: all 0.2s; color: var(--text-light); }
-    .toggle-btn.active { background: var(--surface); color: var(--primary); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-
-    /* برد بازی دوز - وسط */
-    .xo-area { 
-        flex: 1; display: flex; flex-direction: column; align-items: center; 
-        justify-content: center; 
-        padding: 1rem;
-    }
-    .board {
-      display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
-      background: var(--surface); padding: 10px; border-radius: 24px;
-      width: 320px; height: 320px; box-shadow: 0 10px 30px -5px rgba(0,0,0,0.08);
-    }
-    .cell {
-      background: var(--bg); border-radius: 16px; display: flex; align-items: center; justify-content: center;
-      cursor: pointer; transition: all 0.2s;
-    }
-    .cell svg { width: 50%; height: 50%; opacity: 0; transform: scale(0.5); transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
-    .cell.filled svg { opacity: 1; transform: scale(1); }
-    .cell.x { color: var(--primary); }
-    .cell.o { color: var(--accent); }
-
-    /* بازی حافظه - وسط */
-    .memory-area { 
-        flex: 1; display: flex; flex-direction: column; align-items: center; 
-        justify-content: center;
-        padding: 1rem;
-    }
-    .memory-grid {
-      display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
-      width: 100%; max-width: 340px; 
-    }
-    .memory-card { 
-        background: transparent; perspective: 1000px; cursor: pointer; border-radius: 12px; 
-        aspect-ratio: 1; 
-    }
-    .memory-inner {
-      position: relative; width: 100%; height: 100%; text-align: center;
-      transition: transform 0.6s; transform-style: preserve-3d; border-radius: 12px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    }
-    .memory-card.flipped .memory-inner { transform: rotateY(180deg); }
-    .memory-card.matched .memory-inner { box-shadow: 0 0 10px var(--accent); }
-    .mem-face {
-      position: absolute; width: 100%; height: 100%;
-      -webkit-backface-visibility: hidden; backface-visibility: hidden;
-      display: flex; align-items: center; justify-content: center;
-      border-radius: 12px; font-size: 1.8rem;
-    }
-    .mem-front { background: var(--surface); color: var(--text); transform: rotateY(180deg); }
-    .mem-back { background: var(--primary); color: white; font-size: 1.2rem; }
-
-    /* بازی ریاضی */
-    .math-area { 
-        flex: 1; display: flex; flex-direction: column; align-items: center; 
-        justify-content: center; 
-        padding: 1.5rem; width: 100%; 
-        padding-bottom: 20%; 
-    }
-    .math-header { display: flex; justify-content: space-between; width: 100%; margin-bottom: 1rem; font-weight: bold; color: var(--text-light); }
-    .math-level-badge { background: var(--accent); color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.9rem; }
-    .math-question { font-size: 3rem; font-weight: 900; margin-bottom: 1.5rem; color: var(--text); direction: ltr; }
-    .math-timer-bar { width: 100%; height: 10px; background: var(--border); border-radius: 5px; overflow: hidden; margin-bottom: 1.5rem; }
-    .math-timer-fill { height: 100%; background: var(--primary); width: 100%; transition: width 0.1s linear; }
-    .math-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; width: 100%; }
-    .math-btn {
-      padding: 1.5rem; border-radius: 20px; border: none; font-size: 2rem; cursor: pointer; transition: transform 0.1s;
-      display: flex; align-items: center; justify-content: center; color: white;
-    }
-    .btn-true { background: var(--success); box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3); }
-    .btn-false { background: var(--danger); box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3); }
-    .math-btn:active { transform: scale(0.95); }
-
-    /* مودال راهنما */
-    .help-modal {
-      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.8); z-index: 100;
-      display: none; align-items: center; justify-content: center;
-      animation: fadeIn 0.3s;
-    }
-    .help-box {
-      background: var(--surface); width: 85%; max-width: 320px;
-      padding: 1.5rem; border-radius: 24px; text-align: center;
-    }
-    .help-icon { font-size: 3rem; margin-bottom: 1rem; }
-    .help-text { color: var(--text); line-height: 1.6; margin-bottom: 1.5rem; }
-
-    /* تنظیمات */
-    .settings-section { 
-        background: var(--surface); border-radius: 20px; padding: 1.5rem; margin-bottom: 1rem;
-        display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
-    }
-    .color-grid { display: flex; gap: 10px; justify-content: space-between; }
-    .color-circle { width: 45px; height: 45px; border-radius: 50%; cursor: pointer; position: relative; transition: transform 0.2s; }
-    .color-circle.active::after { content: '✓'; color: white; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
-    .theme-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    .theme-card { border: 2px solid var(--border); border-radius: 12px; padding: 10px; text-align: center; cursor: pointer; color: var(--text); }
-    .theme-card.active { border-color: var(--primary); background: rgba(0,0,0,0.02); }
-    .theme-preview { width: 100%; height: 60px; border-radius: 8px; margin-bottom: 8px; border: 1px solid rgba(0,0,0,0.1); }
-
-    .toast {
-      position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
-      background: #102A43; color: white; padding: 12px 24px; border-radius: 30px;
-      font-size: 0.9rem; pointer-events: none; opacity: 0; transition: opacity 0.3s; z-index: 100;
-    }
-  </style>
-</head>
-<body>
-
-  <div class="app-wrapper">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
     
-    <!-- === صفحه 1: داشبورد === -->
-    <div id="view-dashboard" class="view active">
-      <div class="profile-header">
-        <!-- آیکون تنظیمات در هدر (بالا سمت چپ) -->
-        <div class="header-settings-btn" onclick="showView('view-settings')">
-            <svg class="icon" viewBox="0 0 24 24"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.09a2 2 0 0 1-1-1.74v-.47a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
-        </div>
+    <style>
+        :root {
+            --bg-primary: #0a1810;
+            --bg-secondary: #0d1f17;
+            --bg-card: #142820;
+            --bg-elevated: #1a3529;
+            --accent-gold: #c9a227;
+            --accent-gold-dim: #8b7019;
+            --accent-green: #2d5a3d;
+            --accent-green-light: #3d7a52;
+            --text-primary: #e8e4d9;
+            --text-secondary: #a8a090;
+            --text-muted: #6b6558;
+            --border-color: #2a4a38;
+            --glow-gold: rgba(201, 162, 39, 0.15);
+            --shadow-deep: 0 8px 32px rgba(0, 0, 0, 0.5);
+        }
 
-        <div class="avatar-box">
-          <svg class="icon icon-lg" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-        </div>
-        <h2 id="username" style="color: var(--text);">کاربر ایتا</h2>
-        <div id="userLevel" class="user-level-badge">تازه کار</div>
-        
-        <div class="stats-row">
-          <div class="stat-box">
-            <div class="stat-num" id="statWins">0</div>
-            <div class="stat-label">برد</div>
-          </div>
-          <div class="stat-box">
-            <div class="stat-num" id="statLosses">0</div>
-            <div class="stat-label">باخت</div>
-          </div>
-        </div>
-      </div>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
 
-      <div class="menu-list">
-        <button class="btn" onclick="showView('view-games')">
-          <svg class="icon" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-          شروع بازی جدید
-        </button>
-        
-        <button class="btn btn-sec" onclick="showView('view-stats')">
-          <svg class="icon" viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
-          جدول امتیازات
-        </button>
+        html {
+            scroll-behavior: smooth;
+        }
 
-        <button class="btn btn-sec btn-support" onclick="showView('view-support')">
-          <svg class="icon" viewBox="0 0 24 24"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg>
-          پشتیبانی
-        </button>
-      </div>
+        body {
+            font-family: 'Cairo', 'Amiri', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            min-height: 100dvh;
+            overflow-x: hidden;
+            line-height: 1.7;
+            max-width: 100vw;
+        }
 
-      <div class="ad-container" onclick="openLink('https://eitaa.com/mohammadrezanaseri')">
-        <div class="ad-badge">پیشنهاد ویژه</div>
-        <div class="ad-icon">🎁</div>
-        <div class="ad-content">
-          <h4>کانال رسمی ما</h4>
-          <p>برای دریافت جوایز عضو شوید!</p>
-        </div>
-        <div class="ad-arrow">←</div>
-      </div>
-    </div>
+        .bg-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 5 L55 30 L30 55 L5 30 Z' fill='none' stroke='%23c9a227' stroke-width='0.5'/%3E%3Ccircle cx='30' cy='30' r='8' fill='none' stroke='%23c9a227' stroke-width='0.3'/%3E%3C/svg%3E");
+            background-size: 60px 60px;
+        }
 
-    <!-- === صفحه جدید: جدول امتیازات (Stats) === -->
-    <div id="view-stats" class="view">
-      <div class="top-nav">
-        <div class="nav-btn" onclick="showView('view-dashboard')"><svg class="icon" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></div>
-        <span>آمار بازی‌ها</span><div style="width: 40px;"></div>
-      </div>
-      <div class="stats-container">
-        <div class="settings-section">
-          <table class="stats-table">
-            <tr class="st-row">
-              <td>دوز (XO)</td>
-              <td><span class="st-val st-win" id="st-xo-w">0</span> برد</td>
-              <td><span class="st-val st-lose" id="st-xo-l">0</span> باخت</td>
-            </tr>
-            <tr class="st-row">
-              <td>حافظه</td>
-              <td><span class="st-val st-win" id="st-mem-w">0</span> برد</td>
-              <td><span class="st-val st-lose" id="st-mem-l">0</span> باخت</td>
-            </tr>
-            <tr class="st-row">
-              <td>ریاضی</td>
-              <td><span class="st-val st-win" id="st-math-w">0</span> برد</td>
-              <td><span class="st-val st-lose" id="st-math-l">0</span> باخت</td>
-            </tr>
-          </table>
-        </div>
-        <div style="text-align:center; margin-top:20px; color:var(--text-light); font-size:0.9rem;">
-          <p>سطح شما بر اساس تفاضل برد و باخت محاسبه می‌شود.</p>
-        </div>
-      </div>
-    </div>
+        .ambient-glow {
+            position: fixed;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            filter: blur(80px);
+            pointer-events: none;
+            z-index: 0;
+        }
 
-    <!-- === صفحه لیست بازی‌ها === -->
-    <div id="view-games" class="view">
-      <div class="top-nav">
-        <div class="nav-btn" onclick="showView('view-dashboard')"><svg class="icon" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></div>
-        <span>انتخاب بازی</span><div style="width: 40px;"></div>
-      </div>
-      <div class="games-list">
-        
-        <!-- بازی دوز - آیکون شبکه -->
-        <div class="game-card" onclick="openXOMenu()">
-          <div class="game-icon-box" style="background: rgba(var(--primary-rgb), 0.1); background: var(--surface); border: 2px solid var(--primary); color: var(--primary);">
-            <svg class="icon icon-lg" viewBox="0 0 24 24"><path d="M3 9h18"/><path d="M3 15h18"/><path d="M9 3v18"/><path d="M15 3v18"/></svg>
-          </div>
-          <div style="flex: 1;"><h3 style="color: var(--text);">دوز (XO)</h3><p style="font-size: 0.8rem; color: var(--text-light); margin-top: 4px;">فکری • کلاسیک</p></div>
-          <svg class="icon" style="color: var(--text-light);" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
-        </div>
+        .glow-1 {
+            top: -80px;
+            right: -80px;
+            background: radial-gradient(circle, var(--glow-gold) 0%, transparent 70%);
+        }
 
-        <!-- بازی حافظه - آیکون مغز -->
-        <div class="game-card" onclick="openMemoryMenu()">
-          <div class="game-icon-box" style="background: #E0E7FF; color: #4338ca;">
-            <svg class="icon icon-lg" viewBox="0 0 24 24"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"/></svg>
-          </div>
-          <div style="flex: 1;"><h3 style="color: var(--text);">بازی حافظه</h3><p style="font-size: 0.8rem; color: var(--text-light); margin-top: 4px;">تمرکز • سرگرمی</p></div>
-          <svg class="icon" style="color: var(--text-light);" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
-        </div>
+        .glow-2 {
+            bottom: 15%;
+            left: -100px;
+            background: radial-gradient(circle, rgba(45, 90, 61, 0.1) 0%, transparent 70%);
+        }
 
-        <!-- بازی نبرد ریاضی - آیکون ماشین حساب -->
-        <div class="game-card" onclick="showMathMode()">
-          <div class="game-icon-box" style="background: #FEE2E2; color: #EF4444;">
-            <svg class="icon icon-lg" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="16" y1="14" x2="16" y2="14"/><line x1="16" y1="18" x2="16" y2="18"/><line x1="8" y1="14" x2="8" y2="14"/><line x1="8" y1="18" x2="8" y2="18"/><line x1="12" y1="14" x2="12" y2="14"/><line x1="12" y1="18" x2="12" y2="18"/></svg>
-          </div>
-          <div style="flex: 1;"><h3 style="color: var(--text);">نبرد ریاضی</h3><p style="font-size: 0.8rem; color: var(--text-light); margin-top: 4px;">سرعت عمل • هیجان‌انگیز</p></div>
-          <svg class="icon" style="color: var(--text-light);" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
-        </div>
+        .app-container {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            min-height: 100dvh;
+            max-width: 480px;
+            margin: 0 auto;
+        }
 
-        <!-- مار و پله - آیکون دسته بازی -->
-        <div class="game-card locked" onclick="showToast('🚧 در حال ساخت...')">
-          <div class="game-icon-box" style="background: #D1FAE5; color: #10B981;">
-            <svg class="icon icon-lg" viewBox="0 0 24 24"><line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/><line x1="15" y1="13" x2="15.01" y2="13"/><line x1="18" y1="11" x2="18.01" y2="11"/><rect x="2" y="6" width="20" height="12" rx="2"/></svg>
-          </div>
-          <div style="flex: 1;"><h3 style="color: var(--text);">مار و پله</h3><p style="font-size: 0.8rem; color: var(--text-light); margin-top: 4px;">هیجان‌انگیز • گروهی</p></div>
-          <div class="badge-soon">به زودی</div>
-        </div>
-      </div>
-    </div>
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: linear-gradient(180deg, var(--bg-primary) 0%, transparent 100%);
+            padding: 12px 16px;
+            padding-top: max(12px, env(safe-area-inset-top));
+        }
 
-    <!-- === صفحه انتخاب سطح ریاضی === -->
-    <div id="view-math-mode" class="view">
-      <div class="top-nav">
-        <div class="nav-btn" onclick="showView('view-games')"><svg class="icon" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></div>
-        <span>نوع نبرد ریاضی</span><div style="width: 40px;"></div>
-      </div>
-      <div style="padding: 2rem; display: flex; flex-direction: column; gap: 1rem; flex: 1; justify-content: center;">
-        <button class="btn" onclick="startMathGame('easy')" style="height: auto; padding: 1.5rem; justify-content: space-between;">
-          <div style="display:flex; align-items:center; gap:12px;">
-            <div style="background:rgba(255,255,255,0.2); padding:8px; border-radius:12px; font-size:1.5rem;">➕</div>
-            <div style="text-align: right;"><div style="font-size: 1.1rem;">مقدماتی</div><div style="font-size: 0.8rem; opacity: 0.8; font-weight: normal;">جمع و تفریق ساده</div></div>
-          </div>
-          <svg class="icon" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
-        </button>
-        <button class="btn btn-sec" onclick="startMathGame('hard')" style="height: auto; padding: 1.5rem; justify-content: space-between;">
-          <div style="display:flex; align-items:center; gap:12px;">
-            <div style="background: var(--bg); padding:8px; border-radius:12px; font-size:1.5rem;">✖️</div>
-            <div style="text-align: right;"><div style="font-size: 1.1rem;">حرفه‌ای</div><div style="font-size: 0.8rem; color: var(--text-light); font-weight: normal;">ضرب و ترکیبی</div></div>
-          </div>
-          <svg class="icon" style="color: var(--text-light);" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
-        </button>
-      </div>
-    </div>
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
 
-    <!-- === صفحه انتخاب سطح حافظه === -->
-    <div id="view-memory-setup" class="view">
-        <div class="top-nav">
-          <div class="nav-btn" onclick="showView('view-games')"><svg class="icon" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></div>
-          <span>تنظیمات حافظه</span><div style="width: 40px;"></div>
-        </div>
-        <div style="padding: 2rem; display: flex; flex-direction: column; gap: 1rem; flex: 1; justify-content: center;">
-          <div class="settings-section" style="margin-bottom: 2rem;">
-            <span class="setup-title">سطح دشواری</span>
-            <div class="toggle-container">
-                <div class="toggle-btn active" id="mem-easy" onclick="setMemDifficulty('easy')">آسان</div>
-                <div class="toggle-btn" id="mem-medium" onclick="setMemDifficulty('medium')">متوسط</div>
-                <div class="toggle-btn" id="mem-hard" onclick="setMemDifficulty('hard')">سخت</div>
-            </div>
-            
-            <button class="btn" onclick="launchMemoryGame()" style="height: auto; padding: 1.2rem; justify-content: center; margin-top: 1.5rem;">
-                <div style="display:flex; align-items:center; gap:10px;">
-                  <span>شروع بازی</span>
-                  <svg class="icon" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
-                </div>
-            </button>
-          </div>
-        </div>
-      </div>
+        .header-title {
+            font-family: 'Amiri', serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--accent-gold);
+            text-shadow: 0 2px 10px var(--glow-gold);
+        }
 
-    <!-- === صفحه بازی دوز (XO) === -->
-    <div id="view-xo" class="view">
-      <div class="top-nav">
-        <div class="nav-btn" onclick="showView('view-xo-setup')"><svg class="icon" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></div>
-        <span id="xoStatus">نوبت بازیکن</span>
-        <div class="nav-btn" onclick="resetXO()"><svg class="icon" viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg></div>
-      </div>
-      <div class="xo-area">
-        <div class="board" id="board"></div>
-        <div class="mini-ad" onclick="openLink('https://eitaa.com/mohammadrezanaseri')">
-          <div>📣 کانال جوایز ما</div><div>عضو شوید ←</div>
-        </div>
-      </div>
-    </div>
+        .header-icons {
+            display: flex;
+            gap: 6px;
+        }
 
-    <!-- === صفحه بازی حافظه === -->
-    <div id="view-memory" class="view">
-      <div class="top-nav">
-        <div class="nav-btn" onclick="showView('view-memory-setup')"><svg class="icon" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></div>
-        <span id="memStatus">پیدا کردن جفت‌ها</span>
-        <!-- دکمه راهنما (لامپ) -->
-        <div class="nav-btn" onclick="showHelp('memory')">
-          <svg class="icon help-btn-icon" viewBox="0 0 24 24"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2v1"/><path d="M12 7v.01"/><path d="M12 11v.01"/><path d="M15.5 12.5a3.5 3.5 0 1 0-7 0c0 3 2.5 4 3.5 5.5h.01c.9-1.5 3.5-2.5 3.5-5.5Z"/></svg>
-        </div>
-      </div>
-      <div class="memory-area">
-        <div class="memory-grid" id="memoryBoard"></div>
-        <div class="mini-ad" onclick="openLink('https://eitaa.com/mohammadrezanaseri')">
-          <div>📣 کانال جوایز ما</div><div>عضو شوید ←</div>
-        </div>
-      </div>
-    </div>
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
 
-    <!-- === صفحه بازی ریاضی === -->
-    <div id="view-math" class="view">
-      <div class="top-nav">
-        <div class="nav-btn" onclick="showView('view-math-mode')"><svg class="icon" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></div>
-        <span>نبرد ریاضی</span>
-        <!-- دکمه راهنما (لامپ) -->
-        <div class="nav-btn" onclick="showHelp('math')">
-          <svg class="icon help-btn-icon" viewBox="0 0 24 24"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2v1"/><path d="M12 7v.01"/><path d="M12 11v.01"/><path d="M15.5 12.5a3.5 3.5 0 1 0-7 0c0 3 2.5 4 3.5 5.5h.01c.9-1.5 3.5-2.5 3.5-5.5Z"/></svg>
-        </div>
-      </div>
-      <div class="math-area">
-        <div class="math-header">
-          <div>امتیاز: <span id="mathScore">0</span></div>
-          <div class="math-level-badge">سطح: <span id="mathLevel">1</span></div>
-        </div>
-        <div class="math-timer-bar"><div class="math-timer-fill" id="mathTimerBar"></div></div>
-        <div class="math-question" id="mathQuestion">2 + 2 = 4</div>
-        <div class="math-controls">
-          <button class="math-btn btn-true" onclick="answerMath(true)">✅</button>
-          <button class="math-btn btn-false" onclick="answerMath(false)">❌</button>
-        </div>
-        <div class="mini-ad" onclick="openLink('https://eitaa.com/mohammadrezanaseri')" style="margin-top: auto;">
-          <div>📣 کانال جوایز ما</div><div>عضو شوید ←</div>
-        </div>
-      </div>
-    </div>
+        .icon-btn:hover, .icon-btn:active {
+            background: var(--bg-elevated);
+            border-color: var(--accent-gold-dim);
+        }
 
-    <!-- === صفحات جانبی === -->
-    <div id="view-xo-setup" class="view">
-      <div class="top-nav"><div class="nav-btn" onclick="showView('view-xo-mode')"><svg class="icon" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></div><span>تنظیمات بازی</span><div style="width: 40px;"></div></div>
-      <div style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; flex: 1;">
-        <div class="settings-section">
-          <div class="setup-group"><span class="setup-title">انتخاب مهره شما</span><div class="toggle-container"><div class="toggle-btn active" id="btn-player-x" onclick="setPlayerSymbol('X')">X (شروع)</div><div class="toggle-btn" id="btn-player-o" onclick="setPlayerSymbol('O')">O (نفر دوم)</div></div></div>
-          <div class="setup-group" id="difficulty-group"><span class="setup-title">سطح دشواری ربات</span><div class="toggle-container"><div class="toggle-btn active" id="diff-easy" onclick="setDifficulty('easy')">آسان</div><div class="toggle-btn" id="diff-medium" onclick="setDifficulty('medium')">متوسط</div><div class="toggle-btn" id="diff-hard" onclick="setDifficulty('hard')">سخت</div></div></div>
-          
-          <!-- دکمه شروع بازی داخل تنظیمات -->
-          <button class="btn" onclick="launchGame()" style="margin-top: 1.5rem;">شروع بازی 🚀</button>
-        </div>
-      </div>
-    </div>
+        .icon-btn svg {
+            width: 18px;
+            height: 18px;
+            stroke: var(--text-secondary);
+        }
 
-    <div id="view-xo-mode" class="view">
-      <div class="top-nav"><div class="nav-btn" onclick="showView('view-games')"><svg class="icon" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></div><span>نوع بازی دوز</span><div style="width: 40px;"></div></div>
-      <div style="padding: 2rem; display: flex; flex-direction: column; gap: 1rem; flex: 1; justify-content: center;">
-        <button class="btn" onclick="showGameSetup('ai')" style="height: auto; padding: 1.5rem; justify-content: space-between;"><div style="display:flex; align-items:center; gap:12px;"><div style="background:rgba(255,255,255,0.2); padding:8px; border-radius:12px;"><svg class="icon" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/><line x1="8" y1="16" x2="8" y2="16"/><line x1="16" y1="16" x2="16" y2="16"/></svg></div><div style="text-align: right;"><div style="font-size: 1.1rem;">بازی با ربات</div><div style="font-size: 0.8rem; opacity: 0.8; font-weight: normal;">تمرینی تک نفره</div></div></div><svg class="icon" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></button>
-        <button class="btn btn-sec" onclick="showGameSetup('local')" style="height: auto; padding: 1.5rem; justify-content: space-between;"><div style="display:flex; align-items:center; gap:12px;"><div style="background: var(--bg); padding:8px; border-radius:12px; color: var(--primary);"><svg class="icon" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><div style="text-align: right;"><div style="font-size: 1.1rem;">بازی دو نفره</div><div style="font-size: 0.8rem; color: var(--text-light); font-weight: normal;">روی همین دستگاه</div></div></div><svg class="icon" style="color: var(--text-light);" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></button>
-      </div>
-    </div>
+        .search-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(10, 24, 16, 0.98);
+            z-index: 200;
+            display: none;
+            flex-direction: column;
+            padding: 16px;
+            padding-top: max(16px, env(safe-area-inset-top));
+        }
 
-    <div id="view-support" class="view">
-        <div class="top-nav"><div class="nav-btn" onclick="showView('view-dashboard')"><svg class="icon" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></div><span>پشتیبانی</span><div style="width: 40px;"></div></div>
-        <div style="padding: 2rem; display: flex; flex-direction: column; gap: 1rem; flex: 1; justify-content: center;">
-          <button class="btn" onclick="openLink('https://eitaa.com/mohammadrezanaseri')" style="height: 100px; padding: 1.5rem; justify-content: space-between; background: #e67e22;"><div style="display:flex; align-items:center; gap:15px;"><div style="background:rgba(255,255,255,0.2); width: 50px; height: 50px; display:flex; align-items:center; justify-content:center; border-radius:15px;"><svg class="icon icon-lg" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg></div><div style="text-align: right;"><div style="font-size: 1.2rem;">پیام در ایتا</div><div style="font-size: 0.85rem; opacity: 0.9; font-weight: normal;">پاسخگویی سریع</div></div></div><svg class="icon" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></button>
-          <button class="btn" onclick="openLink('https://rubika.ir/mohammadrezNaseri')" style="height: 100px; padding: 1.5rem; justify-content: space-between; background: #8e44ad;"><div style="display:flex; align-items:center; gap:15px;"><div style="background:rgba(255,255,255,0.2); width: 50px; height: 50px; display:flex; align-items:center; justify-content:center; border-radius:15px;"><svg class="icon icon-lg" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.29 7 12 12 20.71 7"></polyline><line x1="12" y1="22" x2="12" y2="12"></line></svg></div><div style="text-align: right;"><div style="font-size: 1.2rem;">پیام در روبیکا</div><div style="font-size: 0.85rem; opacity: 0.9; font-weight: normal;">کانال و پیوی</div></div></div><svg class="icon" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></button>
-        </div>
-    </div>
+        .search-container.active {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
 
-    <div id="view-settings" class="view">
-      <div class="top-nav"><div class="nav-btn" onclick="showView('view-dashboard')"><svg class="icon" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></div><span>تنظیمات</span><div style="width: 40px;"></div></div>
-      <div style="padding: 1.5rem;">
-        <div class="settings-section"><span class="settings-title">رنگ اصلی برنامه</span><div class="color-grid"><div class="color-circle" style="background: #FF9F1C;" onclick="setColor('#FF9F1C', this)"></div><div class="color-circle" style="background: #3B82F6;" onclick="setColor('#3B82F6', this)"></div><div class="color-circle" style="background: #8B5CF6;" onclick="setColor('#8B5CF6', this)"></div><div class="color-circle" style="background: #10B981;" onclick="setColor('#10B981', this)"></div><div class="color-circle" style="background: #EF4444;" onclick="setColor('#EF4444', this)"></div></div></div>
-        <div class="settings-section"><span class="settings-title">تم برنامه</span><div class="theme-grid"><div class="theme-card active" id="theme-light" onclick="setTheme('light')"><div class="theme-preview" style="background: #F0F4F8;"></div><div>روز (روشن)</div></div><div class="theme-card" id="theme-dark" onclick="setTheme('dark')"><div class="theme-preview" style="background: #102A43;"></div><div>شب (تاریک)</div></div></div></div>
-        <div style="text-align: center; color: var(--text-light); font-size: 0.8rem; margin-top: 1rem;">نسخه 3.3.0</div>
-      </div>
-    </div>
+        .search-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
 
-    <!-- مودال راهنما -->
-    <div id="helpModal" class="help-modal">
-      <div class="help-box">
-        <div class="help-icon">💡</div>
-        <h3 id="helpTitle" style="margin-bottom: 10px;">راهنما</h3>
-        <p id="helpText" class="help-text">متن راهنما...</p>
-        <button class="btn" onclick="closeHelp()">متوجه شدم</button>
-      </div>
-    </div>
+        .search-input {
+            flex: 1;
+            height: 44px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 0 14px;
+            font-family: 'Cairo', sans-serif;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            outline: none;
+            transition: border-color 0.3s;
+        }
 
-    <div id="toast" class="toast">پیام</div>
-  </div>
+        .search-input:focus {
+            border-color: var(--accent-gold);
+        }
 
-  <script>
-    const WebApp = window.Eitaa?.WebApp || window.Telegram?.WebApp;
-    
-    // Icons
-    const iconX = `<svg class="icon-fill" viewBox="0 0 24 24" style="width:100%; height:100%;"><path d="M18.3 5.71a.996.996 0 0 0-1.41 0L12 10.59 7.11 5.7a.996.996 0 1 0-1.41 1.41L10.59 12 5.7 16.89a.996.996 0 1 0 1.41 1.41L12 13.41l4.89 4.89a.996.996 0 1 0 1.41-1.41L13.41 12l4.89-4.89c.38-.38.38-1.02 0-1.4z"/></svg>`;
-    const iconO = `<svg class="icon-fill" viewBox="0 0 24 24" style="width:100%; height:100%;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>`;
+        .search-input::placeholder {
+            color: var(--text-muted);
+        }
 
-    function playSound() { try { const c=new (window.AudioContext||window.webkitAudioContext),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=600;g.gain.value=0.05;o.start();setTimeout(()=>{o.stop();c.close()},50) }catch(e){} }
+        .search-results {
+            flex: 1;
+            overflow-y: auto;
+            padding-bottom: 20px;
+        }
 
-    // --- State Management (Wins/Losses) ---
-    let stats = JSON.parse(localStorage.getItem('userStats')) || {
-        xo: {w:0, l:0},
-        memory: {w:0, l:0},
-        math: {w:0, l:0}
-    };
+        .search-result-item {
+            padding: 14px;
+            background: var(--bg-card);
+            border-radius: 10px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: all 0.3s ease;
+        }
 
-    function saveStats() { localStorage.setItem('userStats', JSON.stringify(stats)); updateStatsUI(); }
+        .search-result-item:hover {
+            border-color: var(--accent-gold-dim);
+            transform: translateX(-4px);
+        }
 
-    function getLevelTitle(score) {
-        if(score < 0) return "تازه کار";
-        if(score < 50) return "مبتدی";
-        if(score < 150) return "کاربلد";
-        if(score < 300) return "حرفه‌ای";
-        if(score < 600) return "استاد";
-        if(score < 1000) return "قهرمان";
-        return "افسانه";
-    }
+        .search-result-title {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--accent-gold);
+            margin-bottom: 4px;
+        }
 
-    function updateStatsUI() {
-        const totalWins = stats.xo.w + stats.memory.w + stats.math.w;
-        const totalLosses = stats.xo.l + stats.memory.l + stats.math.l;
-        const score = (totalWins * 10) - (totalLosses * 5); // Formula
-        
-        document.getElementById('statWins').innerText = totalWins;
-        document.getElementById('statLosses').innerText = totalLosses;
-        document.getElementById('userLevel').innerText = getLevelTitle(score);
+        .search-result-preview {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
 
-        // Update Table
-        document.getElementById('st-xo-w').innerText = stats.xo.w; document.getElementById('st-xo-l').innerText = stats.xo.l;
-        document.getElementById('st-mem-w').innerText = stats.memory.w; document.getElementById('st-mem-l').innerText = stats.memory.l;
-        document.getElementById('st-math-w').innerText = stats.math.w; document.getElementById('st-math-l').innerText = stats.math.l;
-    }
+        .search-highlight {
+            background: var(--accent-gold);
+            color: var(--bg-primary);
+            padding: 0 4px;
+            border-radius: 3px;
+        }
 
-    function addWin(game) { stats[game].w++; saveStats(); }
-    function addLoss(game) { stats[game].l++; saveStats(); }
+        .page {
+            display: none;
+            min-height: 100vh;
+            min-height: 100dvh;
+            padding-bottom: 90px;
+        }
 
-    if (WebApp) {
-      WebApp.ready(); WebApp.expand();
-      const user = WebApp.initDataUnsafe?.user;
-      if (user) document.getElementById('username').textContent = user.first_name;
-      WebApp.BackButton.onClick(() => {
-        playSound();
-        const active = document.querySelector('.view.active').id;
-        if (['view-settings','view-support','view-games','view-memory','view-math','view-math-mode','view-memory-setup','view-stats'].includes(active)) showView('view-dashboard', false);
-        else if (active === 'view-xo-mode') showView('view-games', false);
-        else if (active === 'view-xo-setup') showView('view-xo-mode', false);
-        else if (active === 'view-xo') showView('view-xo-setup', false);
-        else WebApp.close();
-      });
-    }
+        .page.active {
+            display: block;
+            animation: pageIn 0.35s ease;
+        }
 
-    function showView(id, sound=true) {
-      if(sound) playSound();
-      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-      document.getElementById(id).classList.add('active');
-      const isRoot = id === 'view-dashboard';
-      if (WebApp && WebApp.BackButton) isRoot ? WebApp.BackButton.hide() : WebApp.BackButton.show();
-      if (id !== 'view-math') clearInterval(mathTimerInterval);
-    }
-
-    function showToast(msg) {
-      playSound(); const t = document.getElementById('toast'); t.innerText = msg; t.style.opacity = 1; setTimeout(() => t.style.opacity = 0, 2000);
-    }
-    function openLink(url) { playSound(); window.open(url, '_blank'); }
-
-    // --- Settings & UI ---
-    const root = document.documentElement;
-    function setColor(color, el) { playSound(); root.style.setProperty('--primary', color); root.style.setProperty('--primary-dark', color); document.querySelectorAll('.color-circle').forEach(c => c.classList.remove('active')); if(el) el.classList.add('active'); localStorage.setItem('appColor', color); }
-    function setTheme(theme) { playSound(); if (theme === 'dark') { root.style.setProperty('--bg', '#102A43'); root.style.setProperty('--surface', '#243B53'); root.style.setProperty('--text', '#F0F4F8'); root.style.setProperty('--text-light', '#9FB3C8'); root.style.setProperty('--border', '#334E68'); document.getElementById('theme-dark').classList.add('active'); document.getElementById('theme-light').classList.remove('active'); if(WebApp.setHeaderColor) WebApp.setHeaderColor('#243B53'); } else { root.style.setProperty('--bg', '#F0F4F8'); root.style.setProperty('--surface', '#ffffff'); root.style.setProperty('--text', '#102A43'); root.style.setProperty('--text-light', '#627D98'); root.style.setProperty('--border', '#e2e8f0'); document.getElementById('theme-light').classList.add('active'); document.getElementById('theme-dark').classList.remove('active'); if(WebApp.setHeaderColor) WebApp.setHeaderColor('#ffffff'); } localStorage.setItem('appTheme', theme); }
-    window.addEventListener('load', () => {
-      const c = localStorage.getItem('appColor')||'#FF9F1C', t = localStorage.getItem('appTheme')||'light';
-      const temp=playSound; playSound=()=>{}; setColor(c); setTheme(t); playSound=temp;
-      const circles = document.querySelectorAll('.color-circle'); circles.forEach(ci => { if(ci.style.background.includes(c) || (c==='#FF9F1C' && ci.style.background.includes('255, 159'))) ci.classList.add('active'); });
-      updateStatsUI(); // Load stats on start
-    });
-
-    // --- Help System ---
-    function showHelp(type) {
-      playSound();
-      const modal = document.getElementById('helpModal');
-      const title = document.getElementById('helpTitle');
-      const text = document.getElementById('helpText');
-      
-      if (type === 'memory') {
-        title.innerText = 'راهنمای بازی حافظه';
-        text.innerText = 'کارت‌ها را برگردانید و جفت‌های یکسان را پیدا کنید. با تکمیل بازی، ۱ امتیاز برد می‌گیرید.';
-      } else if (type === 'math') {
-        title.innerText = 'راهنمای نبرد ریاضی';
-        text.innerText = 'درست یا غلط بودن عبارت را تشخیص دهید. باختن امتیاز باخت را زیاد می‌کند. رسیدن به سطح ۵ (۲۰ امتیاز) ۱ برد جایزه دارد.';
-      }
-      modal.style.display = 'flex';
-    }
-    function closeHelp() { document.getElementById('helpModal').style.display = 'none'; playSound(); }
-
-    // --- XO Logic ---
-    let board = [], currentPlayer = 'X', active = true, gameMode = 'ai', userSymbol = 'X', aiDifficulty = 'easy';
-    function openXOMenu() { showView('view-xo-mode'); }
-    function showGameSetup(mode) {
-      gameMode = mode; document.getElementById('difficulty-group').style.display = (mode === 'ai') ? 'block' : 'none';
-      setPlayerSymbol('X'); setDifficulty('easy'); showView('view-xo-setup');
-    }
-    function setPlayerSymbol(sym) { playSound(); userSymbol = sym; document.getElementById('btn-player-x').className = `toggle-btn ${sym==='X'?'active':''}`; document.getElementById('btn-player-o').className = `toggle-btn ${sym==='O'?'active':''}`; }
-    function setDifficulty(diff) { playSound(); aiDifficulty = diff; document.getElementById('diff-easy').className = `toggle-btn ${diff==='easy'?'active':''}`; document.getElementById('diff-medium').className = `toggle-btn ${diff==='medium'?'active':''}`; document.getElementById('diff-hard').className = `toggle-btn ${diff==='hard'?'active':''}`; }
-    function launchGame() { resetXO(); showView('view-xo'); }
-    function resetXO() {
-      playSound(); board = Array(9).fill(''); currentPlayer = 'X'; active = true; drawBoard(); updateStatusText();
-      if (gameMode === 'ai' && userSymbol === 'O') setTimeout(aiMove, 600);
-    }
-    function drawBoard() {
-      const b = document.getElementById('board'); b.innerHTML = '';
-      board.forEach((val, i) => {
-        const c = document.createElement('div'); c.className = `cell ${val ? val.toLowerCase() + ' filled' : ''}`;
-        if(val === 'X') c.innerHTML = iconX; else if(val === 'O') c.innerHTML = iconO;
-        c.onclick = () => move(i); b.appendChild(c);
-      });
-    }
-    function move(i) {
-      if (board[i] || !active) return;
-      if (gameMode === 'ai' && currentPlayer !== userSymbol) return;
-      makeMove(i);
-      if (active && gameMode === 'ai') setTimeout(aiMove, 600);
-    }
-    function makeMove(i) {
-      playSound(); board[i] = currentPlayer; drawBoard();
-      if (checkWin()) {
-        let winnerName = `🎉 بازیکن ${currentPlayer} برد!`;
-        if (gameMode === 'ai') {
-            if (currentPlayer === userSymbol) {
-                winnerName = '🎉 شما بردید!';
-                addWin('xo'); 
-            } else {
-                winnerName = '🤖 ربات برد!';
-                addLoss('xo'); 
+        @keyframes pageIn {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
             }
         }
-        document.getElementById('xoStatus').innerText = winnerName; active = false; 
-        setTimeout(resetXO, 2000); 
-        return;
-      }
-      if (!board.includes('')) {
-        document.getElementById('xoStatus').innerText = '🤝 مساوی شد!'; active = false; 
-        setTimeout(resetXO, 2000); 
-        return;
-      }
-      currentPlayer = currentPlayer === 'X' ? 'O' : 'X'; updateStatusText();
-    }
-    function updateStatusText() {
-      if (!active) return;
-      if (gameMode === 'ai') document.getElementById('xoStatus').innerText = currentPlayer === userSymbol ? 'نوبت شما' : 'نوبت ربات...';
-      else document.getElementById('xoStatus').innerText = `نوبت بازیکن (${currentPlayer})`;
-    }
-    function aiMove() {
-      if (!active) return;
-      const botSym = currentPlayer, oppSym = botSym === 'X' ? 'O' : 'X'; let moveIndex = null;
-      if (aiDifficulty !== 'easy') moveIndex = findBestMove(botSym);
-      if (moveIndex === null && aiDifficulty !== 'easy') moveIndex = findBestMove(oppSym);
-      if (moveIndex === null && aiDifficulty === 'hard') {
-        if (board[4] === '') moveIndex = 4;
-        else { const corners = [0, 2, 6, 8].filter(idx => board[idx] === ''); if (corners.length > 0) moveIndex = corners[Math.floor(Math.random() * corners.length)]; }
-      }
-      if (moveIndex === null) { const empty = board.map((v, i) => v === '' ? i : null).filter(v => v !== null); if (empty.length > 0) moveIndex = empty[Math.floor(Math.random() * empty.length)]; }
-      if (moveIndex !== null) makeMove(moveIndex);
-    }
-    function findBestMove(player) {
-      const wins = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-      for (let w of wins) { const [a, b, c] = w; if (board[a] === player && board[b] === player && board[c] === '') return c; if (board[a] === player && board[c] === player && board[b] === '') return b; if (board[b] === player && board[c] === player && board[a] === '') return a; }
-      return null;
-    }
-    function checkWin() { const wins = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]]; return wins.some(w => board[w[0]] && board[w[0]] === board[w[1]] && board[w[0]] === board[w[2]]); }
 
-    // --- Memory Game Logic ---
-    let memCards = [], memFlipped = [], memMatched = [];
-    const emojiPool = ['🍕','🚀','🐱','🌵','⚽','💎','🎈','🎁','🍎','🚗','🐶','🦄','🍦','🎸','⏰','💡','🔑','📸','💊','🧸','☂️','🔥','⚡','⭐'];
-    let memoryDifficulty = 'medium';
-
-    function openMemoryMenu() { showView('view-memory-setup'); }
-
-    function setMemDifficulty(diff) {
-        playSound(); memoryDifficulty = diff;
-        document.getElementById('mem-easy').className = `toggle-btn ${diff==='easy'?'active':''}`;
-        document.getElementById('mem-medium').className = `toggle-btn ${diff==='medium'?'active':''}`;
-        document.getElementById('mem-hard').className = `toggle-btn ${diff==='hard'?'active':''}`;
-    }
-
-    function launchMemoryGame() {
-      memFlipped = []; memMatched = [];
-      let pairCount;
-      if (memoryDifficulty === 'easy') pairCount = 6;
-      else if (memoryDifficulty === 'medium') pairCount = 8;
-      else pairCount = 10;
-
-      const shuffledPool = [...emojiPool].sort(() => 0.5 - Math.random());
-      const selectedEmojis = shuffledPool.slice(0, pairCount);
-      memCards = [...selectedEmojis, ...selectedEmojis].sort(() => 0.5 - Math.random());
-      
-      const board = document.getElementById('memoryBoard');
-      board.innerHTML = '';
-      
-      if (memoryDifficulty === 'easy') board.style.gridTemplateColumns = 'repeat(3, 1fr)';
-      else if (memoryDifficulty === 'medium') board.style.gridTemplateColumns = 'repeat(4, 1fr)';
-      else board.style.gridTemplateColumns = 'repeat(4, 1fr)'; 
-
-      memCards.forEach((emoji, index) => {
-        const card = document.createElement('div');
-        card.className = 'memory-card';
-        card.innerHTML = `<div class="memory-inner"><div class="mem-face mem-back">?</div><div class="mem-face mem-front">${emoji}</div></div>`;
-        card.onclick = () => flipCard(card, index);
-        board.appendChild(card);
-      });
-      document.getElementById('memStatus').innerText = 'پیدا کردن جفت‌ها';
-      showView('view-memory');
-    }
-
-    function flipCard(card, index) {
-      if (memFlipped.length >= 2 || memFlipped.some(c => c.index === index) || memMatched.includes(index)) return;
-      playSound();
-      card.classList.add('flipped');
-      memFlipped.push({ card, index, emoji: memCards[index] });
-
-      if (memFlipped.length === 2) {
-        if (memFlipped[0].emoji === memFlipped[1].emoji) {
-          memMatched.push(memFlipped[0].index, memFlipped[1].index);
-          memFlipped[0].card.classList.add('matched');
-          memFlipped[1].card.classList.add('matched');
-          memFlipped = [];
-          if (memMatched.length === memCards.length) { 
-              document.getElementById('memStatus').innerText = '🎉 عالی بود!';
-              addWin('memory'); 
-              setTimeout(launchMemoryGame, 2000);
-          }
-        } else {
-          setTimeout(() => {
-            memFlipped.forEach(item => item.card.classList.remove('flipped'));
-            memFlipped = [];
-          }, 1000);
-        }
-      }
-    }
-
-    // --- Math Game Logic ---
-    let mathScoreVal = 0, mathTimerInterval, mathCorrectAnswer = true, mathTimeLeft = 100, mathLevel = 1;
-    let mathMode = 'easy'; 
-
-    function showMathMode() { showView('view-math-mode'); }
-
-    function startMathGame(mode) {
-      mathMode = mode;
-      mathScoreVal = 0; mathTimeLeft = 100; mathLevel = 1;
-      document.getElementById('mathScore').innerText = '0';
-      document.getElementById('mathLevel').innerText = '1';
-      generateMathQuestion();
-      showView('view-math');
-      startMathTimer();
-    }
-    function startMathTimer() {
-      clearInterval(mathTimerInterval);
-      const bar = document.getElementById('mathTimerBar');
-      mathTimerInterval = setInterval(() => {
-        const dropRate = mathMode === 'hard' ? 1.2 : 0.8;
-        mathTimeLeft -= dropRate; 
-        bar.style.width = mathTimeLeft + '%';
-        if (mathTimeLeft <= 0) endGameMath();
-      }, 80); 
-    }
-    function generateMathQuestion() {
-      let a, b, realRes, operator;
-      
-      if (mathMode === 'easy') {
-        operator = Math.random() > 0.5 ? '+' : '-';
-        a = Math.floor(Math.random() * 20) + 1;
-        b = Math.floor(Math.random() * 20) + 1;
-        if (operator === '-') { if(a < b) [a, b] = [b, a]; }
-        realRes = operator === '+' ? a + b : a - b;
-      } else {
-        operator = Math.random() > 0.6 ? '*' : (Math.random() > 0.5 ? '+' : '-');
-        if (operator === '*') {
-            a = Math.floor(Math.random() * 9) + 2;
-            b = Math.floor(Math.random() * 9) + 2;
-            realRes = a * b;
-            operator = '×';
-        } else {
-            a = Math.floor(Math.random() * 50) + 10;
-            b = Math.floor(Math.random() * 50) + 10;
-            if (operator === '-') { if(a < b) [a, b] = [b, a]; }
-            realRes = operator === '+' ? a + b : a - b;
-        }
-      }
-
-      mathCorrectAnswer = Math.random() > 0.5;
-      let displayRes = realRes;
-      
-      if (!mathCorrectAnswer) {
-        const offset = (Math.floor(Math.random() * 3) + 1) * (Math.random() > 0.5 ? 1 : -1);
-        displayRes = realRes + offset;
-        if(displayRes === realRes) displayRes += 1;
-      }
-      
-      document.getElementById('mathQuestion').innerText = `${a} ${operator} ${b} = ${displayRes}`;
-    }
-    function answerMath(userSaidTrue) {
-      playSound();
-      if (userSaidTrue === mathCorrectAnswer) {
-        mathScoreVal++;
-        document.getElementById('mathScore').innerText = mathScoreVal;
-        
-        // Level Logic
-        if (mathScoreVal % 5 === 0) {
-            mathLevel++;
-            document.getElementById('mathLevel').innerText = mathLevel;
-            showToast('سطح ارتقا یافت! 🚀');
-            if (mathScoreVal === 20) addWin('math'); 
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
-        mathTimeLeft = Math.min(100, mathTimeLeft + (mathMode==='hard'?15:20)); 
-        generateMathQuestion();
-      } else {
-        endGameMath();
-      }
-    }
-    function endGameMath() {
-      clearInterval(mathTimerInterval);
-      addLoss('math'); 
-      showToast(`بازی تمام شد! امتیاز: ${mathScoreVal}`);
-      setTimeout(() => showView('view-games'), 2000);
-    }
+        .home-hero {
+            text-align: center;
+            padding: 30px 16px;
+            min-height: calc(100vh - 140px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
 
-    drawBoard();
-  </script>
+        .mosque-illustration {
+            width: 100%;
+            max-width: 260px;
+            height: 180px;
+            margin: 0 auto 24px;
+            position: relative;
+        }
+
+        .mosque-svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .home-title {
+            font-family: 'Amiri', serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--accent-gold);
+            margin-bottom: 8px;
+            text-shadow: 0 4px 20px var(--glow-gold);
+        }
+
+        .home-subtitle {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        .home-verse {
+            font-family: 'Amiri', serif;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            max-width: 280px;
+            line-height: 1.9;
+        }
+
+        .content-header {
+            padding: 16px;
+            text-align: center;
+        }
+
+        .content-title {
+            font-family: 'Amiri', serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--accent-gold);
+            margin-bottom: 6px;
+        }
+
+        .content-subtitle {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .section-divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 20px 16px 12px;
+        }
+
+        .section-divider-line {
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border-color), transparent);
+        }
+
+        .section-divider-title {
+            font-family: 'Amiri', serif;
+            font-size: 1rem;
+            color: var(--accent-gold);
+            white-space: nowrap;
+        }
+
+        .content-list {
+            padding: 0 16px;
+        }
+
+        .list-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 14px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .list-item:hover {
+            border-color: var(--accent-gold-dim);
+            transform: translateX(-3px);
+        }
+
+        .list-item-icon {
+            width: 40px;
+            height: 40px;
+            min-width: 40px;
+            background: linear-gradient(135deg, var(--accent-green) 0%, var(--accent-green-light) 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Amiri', serif;
+            font-size: 1.1rem;
+            color: var(--accent-gold);
+        }
+
+        .list-item-content {
+            flex: 1;
+        }
+
+        .list-item-title {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            margin-bottom: 3px;
+        }
+
+        .list-item-desc {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .list-item-arrow {
+            width: 18px;
+            height: 18px;
+            stroke: var(--text-muted);
+        }
+
+        .detail-content {
+            padding: 16px;
+            max-width: 100%;
+        }
+
+        .detail-header {
+            text-align: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .detail-title {
+            font-family: 'Amiri', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-gold);
+            margin-bottom: 6px;
+        }
+
+        .detail-body {
+            font-size: 0.95rem;
+            line-height: 1.9;
+            color: var(--text-primary);
+        }
+
+        .detail-body p {
+            margin-bottom: 16px;
+            text-align: justify;
+        }
+
+        .detail-section {
+            background: var(--bg-card);
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 16px;
+            border: 1px solid var(--border-color);
+        }
+
+        .detail-section-title {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--accent-gold);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .detail-section-title::before {
+            content: '';
+            width: 3px;
+            height: 18px;
+            background: var(--accent-gold);
+            border-radius: 2px;
+        }
+
+        .masum-card {
+            background: linear-gradient(145deg, var(--bg-card) 0%, var(--bg-elevated) 100%);
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 16px;
+            border: 1px solid var(--border-color);
+        }
+
+        .masum-header {
+            background: linear-gradient(135deg, var(--accent-green) 0%, var(--accent-green-light) 100%);
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .masum-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 24px;
+            background: linear-gradient(180deg, transparent, var(--bg-card));
+        }
+
+        .masum-name {
+            font-family: 'Amiri', serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--accent-gold);
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .masum-title-badge {
+            display: inline-block;
+            background: rgba(0,0,0,0.3);
+            padding: 4px 10px;
+            border-radius: 16px;
+            font-size: 0.8rem;
+            color: var(--text-primary);
+            margin-top: 6px;
+        }
+
+        .masum-body {
+            padding: 16px;
+        }
+
+        .masum-info-row {
+            display: flex;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .masum-info-row:last-child {
+            border-bottom: none;
+        }
+
+        .masum-info-label {
+            width: 100px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .masum-info-value {
+            flex: 1;
+            color: var(--text-primary);
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .prayer-step {
+            background: var(--bg-card);
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 12px;
+            border-right: 3px solid var(--accent-gold);
+        }
+
+        .prayer-step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            background: var(--accent-gold);
+            color: var(--bg-primary);
+            border-radius: 7px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            margin-left: 10px;
+        }
+
+        .prayer-step-title {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--accent-gold);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+        }
+
+        .prayer-step-content {
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            line-height: 1.8;
+        }
+
+        .prayer-arabic {
+            font-family: 'Amiri', serif;
+            font-size: 1.1rem;
+            text-align: center;
+            background: var(--bg-primary);
+            padding: 14px;
+            border-radius: 10px;
+            margin: 10px 0;
+            color: var(--accent-gold);
+            direction: rtl;
+        }
+
+        .tasbih-container {
+            background: linear-gradient(145deg, var(--bg-card) 0%, var(--bg-elevated) 100%);
+            border-radius: 20px;
+            padding: 24px 16px;
+            text-align: center;
+            margin-bottom: 16px;
+            border: 1px solid var(--border-color);
+        }
+
+        .tasbih-display {
+            font-family: 'Amiri', serif;
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: var(--accent-gold);
+            margin-bottom: 16px;
+            text-shadow: 0 4px 20px var(--glow-gold);
+            transition: transform 0.1s ease;
+        }
+
+        .tasbih-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .tasbih-btn {
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-family: 'Cairo', sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .tasbih-btn-primary {
+            background: linear-gradient(135deg, var(--accent-green) 0%, var(--accent-green-light) 100%);
+            color: var(--text-primary);
+        }
+
+        .tasbih-btn-primary:active {
+            transform: scale(0.95);
+        }
+
+        .tasbih-btn-secondary {
+            background: var(--bg-primary);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+        }
+
+        .tasbih-dhikr {
+            font-family: 'Amiri', serif;
+            font-size: 1.2rem;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(180deg, transparent 0%, var(--bg-primary) 40%);
+            padding: 10px 16px;
+            padding-bottom: max(10px, env(safe-area-inset-bottom));
+            z-index: 100;
+        }
+
+        .bottom-nav-inner {
+            display: flex;
+            justify-content: space-around;
+            background: var(--bg-card);
+            border-radius: 18px;
+            padding: 6px;
+            border: 1px solid var(--border-color);
+            max-width: 480px;
+            margin: 0 auto;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            padding: 8px 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item.active {
+            background: var(--accent-green);
+        }
+
+        .nav-item svg {
+            width: 20px;
+            height: 20px;
+            stroke: var(--text-muted);
+        }
+
+        .nav-item.active svg {
+            stroke: var(--accent-gold);
+        }
+
+        .nav-item span {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+
+        .nav-item.active span {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-family: 'Cairo', sans-serif;
+            font-size: 0.85rem;
+            cursor: pointer;
+            margin-bottom: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            border-color: var(--accent-gold-dim);
+        }
+
+        .back-btn svg {
+            width: 16px;
+            height: 16px;
+            stroke: var(--text-secondary);
+        }
+
+        .hadith-box {
+            background: linear-gradient(145deg, var(--bg-card) 0%, rgba(201, 162, 39, 0.05) 100%);
+            border: 1px solid var(--accent-gold-dim);
+            border-radius: 16px;
+            padding: 18px;
+            margin-bottom: 16px;
+        }
+
+        .hadith-text {
+            font-family: 'Amiri', serif;
+            font-size: 1.05rem;
+            line-height: 1.9;
+            color: var(--text-primary);
+            text-align: center;
+            margin-bottom: 14px;
+        }
+
+        .hadith-source {
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--accent-gold);
+            padding-top: 14px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 2px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-gold-dim);
+        }
+
+        *:focus-visible {
+            outline: 2px solid var(--accent-gold);
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-pattern"></div>
+    <div class="ambient-glow glow-1"></div>
+    <div class="ambient-glow glow-2"></div>
+
+    <div class="app-container">
+        <header class="header">
+            <div class="header-content">
+                <h1 class="header-title">أصول الدين والصلاة</h1>
+                <div class="header-icons">
+                    <button class="icon-btn" id="searchBtn" aria-label="بحث">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"/>
+                            <path d="M21 21l-4.35-4.35"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <div class="search-container" id="searchContainer">
+            <div class="search-header">
+                <button class="icon-btn" id="closeSearch" aria-label="إغلاق">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
+                </button>
+                <input type="text" class="search-input" id="searchInput" placeholder="ابحث في التطبيق...">
+            </div>
+            <div class="search-results" id="searchResults"></div>
+        </div>
+
+        <!-- Home Page -->
+        <div class="page active" id="page-home">
+            <div class="home-hero">
+                <div class="mosque-illustration">
+                    <svg class="mosque-svg" viewBox="0 0 300 200" fill="none">
+                        <defs>
+                            <linearGradient id="skyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stop-color="#1a3529"/>
+                                <stop offset="100%" stop-color="#0d1f17"/>
+                            </linearGradient>
+                            <linearGradient id="domeGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stop-color="#c9a227"/>
+                                <stop offset="100%" stop-color="#8b7019"/>
+                            </linearGradient>
+                            <linearGradient id="buildingGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stop-color="#2d5a3d"/>
+                                <stop offset="100%" stop-color="#1a3529"/>
+                            </linearGradient>
+                        </defs>
+                        
+                        <circle cx="50" cy="30" r="1" fill="#c9a227" opacity="0.6"/>
+                        <circle cx="100" cy="20" r="1.5" fill="#c9a227" opacity="0.8"/>
+                        <circle cx="180" cy="35" r="1" fill="#c9a227" opacity="0.5"/>
+                        <circle cx="250" cy="25" r="1.5" fill="#c9a227" opacity="0.7"/>
+                        <circle cx="220" cy="50" r="1" fill="#c9a227" opacity="0.6"/>
+                        <circle cx="80" cy="55" r="1" fill="#c9a227" opacity="0.5"/>
+                        
+                        <circle cx="240" cy="40" r="20" fill="#c9a227" opacity="0.9"/>
+                        <circle cx="248" cy="36" r="18" fill="#0d1f17"/>
+                        
+                        <rect x="80" y="100" width="140" height="100" fill="url(#buildingGrad)"/>
+                        
+                        <ellipse cx="150" cy="100" rx="50" ry="40" fill="url(#buildingGrad)"/>
+                        <path d="M100 100 Q150 50 200 100" fill="url(#buildingGrad)"/>
+                        
+                        <circle cx="150" cy="52" r="5" fill="url(#domeGrad)"/>
+                        <circle cx="153" cy="50" r="4" fill="url(#buildingGrad)"/>
+                        
+                        <rect x="40" y="70" width="25" height="130" fill="url(#buildingGrad)"/>
+                        <path d="M52.5 70 Q40 50 52.5 30 Q65 50 52.5 70" fill="url(#buildingGrad)"/>
+                        <circle cx="52.5" cy="28" r="3" fill="url(#domeGrad)"/>
+                        
+                        <rect x="235" y="70" width="25" height="130" fill="url(#buildingGrad)"/>
+                        <path d="M247.5 70 Q235 50 247.5 30 Q260 50 247.5 70" fill="url(#buildingGrad)"/>
+                        <circle cx="247.5" cy="28" r="3" fill="url(#domeGrad)"/>
+                        
+                        <path d="M130 200 L130 150 Q150 130 170 150 L170 200 Z" fill="#0a1810"/>
+                        <path d="M135 200 L135 155 Q150 140 165 155 L165 200 Z" fill="#142820" stroke="#c9a227" stroke-width="0.5"/>
+                        
+                        <ellipse cx="110" cy="140" rx="10" ry="15" fill="#0a1810" opacity="0.8"/>
+                        <ellipse cx="190" cy="140" rx="10" ry="15" fill="#0a1810" opacity="0.8"/>
+                        
+                        <path d="M85 120 Q100 100 115 120" stroke="#c9a227" stroke-width="0.5" fill="none" opacity="0.5"/>
+                        <path d="M185 120 Q200 100 215 120" stroke="#c9a227" stroke-width="0.5" fill="none" opacity="0.5"/>
+                    </svg>
+                </div>
+                <h2 class="home-title">أصول الدين والصلاة</h2>
+                <p class="home-subtitle">دليلك الشامل للعقيدة والعبادة</p>
+                <p class="home-verse">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</p>
+            </div>
+        </div>
+
+        <!-- Usul Page -->
+        <div class="page" id="page-usul">
+            <div class="content-header">
+                <h2 class="content-title">أصول الدين</h2>
+                <p class="content-subtitle">الأسس العقائدية الخمسة</p>
+            </div>
+            <div class="content-list" id="usul-list"></div>
+            
+            <div class="section-divider">
+                <div class="section-divider-line"></div>
+                <span class="section-divider-title">فروع الدين</span>
+                <div class="section-divider-line"></div>
+            </div>
+            
+            <div class="content-list" id="furu-list"></div>
+        </div>
+
+        <!-- Masumin Page -->
+        <div class="page" id="page-masumin">
+            <div class="content-header">
+                <h2 class="content-title">المعصومون الأربعة عشر</h2>
+                <p class="content-subtitle">صلوات الله عليهم أجمعين</p>
+            </div>
+            <div class="content-list" id="masumin-list"></div>
+        </div>
+
+        <!-- Prayer Page -->
+        <div class="page" id="page-prayer">
+            <div class="content-header">
+                <h2 class="content-title">تعليم الصلاة</h2>
+                <p class="content-subtitle">الصلاة الصحيحة خطوة بخطوة</p>
+            </div>
+            <div class="content-list" id="prayer-list"></div>
+            
+            <div class="section-divider">
+                <div class="section-divider-line"></div>
+                <span class="section-divider-title">التسبيحات والأحاديث</span>
+                <div class="section-divider-line"></div>
+            </div>
+            
+            <div class="content-list" id="tasbih-list"></div>
+        </div>
+
+        <!-- Detail Page -->
+        <div class="page" id="page-detail">
+            <div class="detail-content" id="detail-content"></div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <div class="bottom-nav-inner">
+                <div class="nav-item active" data-nav="home">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+                    </svg>
+                    <span>الرئيسية</span>
+                </div>
+                <div class="nav-item" data-nav="usul">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                        <path d="M2 17l10 5 10-5"/>
+                    </svg>
+                    <span>الأصول</span>
+                </div>
+                <div class="nav-item" data-nav="masumin">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="8" r="5"/>
+                        <path d="M20 21a8 8 0 10-16 0"/>
+                    </svg>
+                    <span>المعصومون</span>
+                </div>
+                <div class="nav-item" data-nav="prayer">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M12 6v6l4 2"/>
+                    </svg>
+                    <span>الصلاة</span>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <script>
+        // Data
+        const usulData = [
+            {
+                id: 'tawhid',
+                title: 'التوحيد',
+                icon: '١',
+                content: `
+                    <p>التوحيد هو الأصل الأول من أصول الدين، وهو الاعتقاد بأن الله سبحانه وتعالى واحد أحد، لا شريك له في الذات والصفات والأفعال.</p>
+                    
+                    <div class="detail-section">
+                        <h3 class="detail-section-title">معنى التوحيد</h3>
+                        <p>التوحيد يعني إفراد الله تعالى بالعبودية والربوبية والألوهية، فالله هو الخالق الرازق المدبر، لا إله غيره ولا رب سواه.</p>
+                    </div>
+                    
+                    <div class="detail-section">
+                        <h3 class="detail-section-title">أقسام التوحيد</h3>
+                        <p><strong>توحيد الذات:</strong> بأن الله واحد في ذاته، لا تركيب فيه ولا تجزؤ.</p>
+                        <p><strong>توحيد الصفات:</strong> بأن صفات الله عين ذاته، لا زائدة عليها.</p>
+                        <p><strong>توحيد الأفعال:</strong> بأن الله هو الفاعل لكل شيء، لا مؤثر في الوجود إلا الله.</p>
+                    </div>
+                    
+                    <div class="detail-section">
+                        <h3 class="detail-section-title">صفات الله تعالى</h3>
+                        <p>الله تعالى متصف بكل صفات الكمال، منزه عن كل صفات النقص. فهو العليم القادر الحي السميع البصير، لا يُشبه خلقه ولا يشبهونه.</p>
+                    </div>
+                `
+            },
+            {
+                id: 'adl',
+                title: 'العدل',
+                icon: '٢',
+                content: `
+                    <p>العدل هو الأصل الثاني من أصول الدين، ومعناه أن الله تعالى منزه عن الظلم والجور، لا يفعل القبيح ولا يُخلِّف وعده.</p>
+                    
+                    <div class="detail-section">
+                        <h3 class="detail-section-title">معنى العدل الإلهي</h3>
+                        <p>العدل صفة كمال في الله تعالى، فالله لا يظلم الناس شيئاً، بل هو الحكم العدل. قال تعالى: {وَمَا رَبُّكَ بِظَلَّامٍ لِّلْعَبِيدِ}.</p>
+                    </div>
+                    
+                    <div class="detail-section">
+                        <h3 class="detail-section-title">قبح الظلم</h3>
+                        <p>الظلم قبيح عقلاً، والله تعالى منزه عن فعل القبيح. فلا يُتصور أن يُعذِّب الله المطيع أو يُثيب العاصي، لأن هذا ظلم والله أعزّ من أن يظلم.</p>
+                    </div>
+                    
+                    <div class="detail-section">
+                        <h3 class="detail-section-title">العدل والابتلاء</h3>
+                        <p>ما يصيب الإنسان من مصائب الدنيا ليس ظلماً من الله، بل هو ابتلاء واختبار، أو تكفير للذنوب، أو رفع للدرجات.</p>
+                    </div>
+                `
+            },
+            {
+                id: 'nubuwwa',
+                title: 'النبوة',
+                icon: '٣',
+                content: `
+                    <p>النبوة هي الأصل الثالث من أصول الدين، وتعني الإيمان بأن الله تعالى أرسل أنبياء ورسلاً لهداية البشرية.</p>
+                    
+                    <div class="detail-section">
+                        <h3 class="detail-section-title">ضرورة النبوة</h3>
+                        <p>العقل يحكم بضرورة إرسال الأنبياء، لأن العقل البشري قاصر عن إدراك جميع ما يصلح الإنسان في معاشه ومعاده، فاحتاج إلى من يُعلِّمه عن الله تعالى.</p>
+                    </div>
+                    
+                    <div class="detail-section">
+                        <h3 class="detail-section-title">صفات النبي</h3>
+                        <p>يجب أن يكون النبي معصوماً عن الخطأ والسهو والنسيان، ومؤيداً بالمعجزات الدالة على صدقه، ومتصفاً بكل الصفات الحميدة.</p>
+                    </div>
+                    
+                    <div class="detail-section">
+                        <h3 class="detail-section-title">خاتم الأنبياء</h3>
+                        <p>النبي محمد صلى الله عليه وآله هو خاتم الأنبياء والمرسلين، لا نبي بعده، بُعث للناس كافةً بشيراً ونذيراً وداعياً إلى الله بإذنه وسراجاً منيراً.</p>
+                    </div>
+                `
+            },
+            {
+                id: 'imama',
+                title: 'الإمامة',
+                icon: '٤',
+                content: `
+                    <p>الإمامة هي الأصل الرابع من أصول الدين، وتعني الإيمان بأن الله تعالى نصب اثني عشر إماماً بعد النبي محمد صلى الله عليه وآله.</p>
+                    
+                    <div class="detail-section">
+                        <h3 class="detail-section-title">ضرورة الإمامة</h3>
+                        <p>الإمامة لطف من الله تعالى، فكما أن العقل يحكم بضرورة النبوة، فإنه يحكم بضرورة الإمامة لحفظ الشريعة من التحريف، وتطبيق أحكام الدين على الوجه الصحيح.</p>
+                    </div>
+                    
+                    <div class="detail-section">
+                        <h3 class="detail-section-title">صفات الإمام</h3>
+                        <p>الإمام يجب أن يكون معصوماً كالنبي، مؤيداً من الله، أعلم أهل زمانه، وأتقاهم لله، وأشجعهم، وأكرمهم، يُعيَّن من قبل الله تعالى.</p>
+                    </div>
+                    
+                    <div class="detail-section">
+                        <h3 class="detail-section-title">الأئمة الاثنا عشر</h3>
+                        <p>هم: الإمام علي صلوات الله عليه، ثم الحسن والحسين، ثم علي بن الحسين، ثم محمد الباقر، ثم جعفر الصادق، ثم موسى الكاظم، ثم علي الرضا، ثم محمد الجواد، ثم علي الهادي، ثم الحسن العسكري، ثم الإمام المهدي عجل الله تعالى فرجه الشريف.</p>
+                    </div>
+                `
+            },
+            {
+                id: 'maad',
+                title: 'المعاد',
+                icon: '٥',
+                content: `
+                    <p>المعاد هو الأصل الخامس من أصول الدين، ويعني الإيمان باليوم الآخر والبعث والنشور والحساب والجنة والنار.</p>
+                    
+                    <div class="detail-section">
+                        <h3 class="detail-section-title">ضرورة المعاد</h3>
+                        <p>العقل يحكم بضرورة المعاد، لأن الدنيا دار ابتلاء واختبار، فيجب أن يكون هناك دار يجازى فيها المحسن بإحسانه والمسيء بإساءته.</p>
+                    </div>
+                    
+                    <div class="detail-section">
+                        <h3 class="detail-section-title">مراحل المعاد</h3>
+                        <p><strong>الموت:</strong> انتقال الروح من الدنيا إلى البرزخ.</p>
+                        <p><strong>البرزخ:</strong> عالم بين الدنيا والآخرة، يُنَعَّم فيه المؤمنون ويُعذَّب فيه الكافرون.</p>
+                        <p><strong>البعث:</strong> إحياء الله للأموات يوم القيامة.</p>
+                        <p><strong>الحساب:</strong> محاسبة الله للعباد على أعمالهم.</p>
+                        <p><strong>الجزاء:</strong> الجنة للمؤمنين والنار للكافرين.</p>
+                    </div>
+                `
+            }
+        ];
+
+        const furuData = [
+            { id: 'salah', title: 'الصلاة', icon: '١', desc: 'عمود الدين' },
+            { id: 'sawm', title: 'الصوم', icon: '٢', desc: 'جُنَّة من النار' },
+            { id: 'zakat', title: 'الزكاة', icon: '٣', desc: 'حق الفقراء' },
+            { id: 'khums', title: 'الخمس', icon: '٤', desc: 'حق أهل البيت' },
+            { id: 'hajj', title: 'الحج', icon: '٥', desc: 'فريضة العمر' },
+            { id: 'jihad', title: 'الجهاد', icon: '٦', desc: 'ذروة سنام الإسلام' },
+            { id: 'amr', title: 'الأمر بالمعروف', icon: '٧', desc: 'هداية الناس' },
+            { id: 'nahy', title: 'النهي عن المنكر', icon: '٨', desc: 'صد الشر' },
+            { id: 'tawalla', title: 'التولي', icon: '٩', desc: 'محبة الأولياء' },
+            { id: 'tabarra', title: 'التبري', icon: '١٠', desc: 'البراءة من الأعداء' }
+        ];
+
+        const masuminData = [
+            { id: 'prophet', name: 'النبي محمد', title: 'صلى الله عليه وآله', badge: 'خاتم الأنبياء', birthDate: '17 ربيع الأول', birthPlace: 'مكة المكرمة', martyrDate: '28 صفر', martyrPlace: 'المدينة المنورة', martyrReason: 'مرض وحمّى بعد تسمم من خيبر' },
+            { id: 'fatima', name: 'السيدة فاطمة الزهراء', title: 'صلوات الله عليها', badge: 'سيدة نساء العالمين', birthDate: '20 جمادى الآخرة', birthPlace: 'مكة المكرمة', martyrDate: '3 جمادى الآخرة', martyrPlace: 'المدينة المنورة', martyrReason: 'أثر الضرب والجراحات بعد وفاة النبي' },
+            { id: 'ali', name: 'الإمام علي بن أبي طالب', title: 'صلوات الله عليه', badge: 'أمير المؤمنين', birthDate: '13 رجب', birthPlace: 'مكة المكرمة (في الكعبة)', martyrDate: '21 رمضان', martyrPlace: 'الكوفة', martyrReason: 'ضربة سيف ابن ملجم الملعون' },
+            { id: 'hasan', name: 'الإمام الحسن المجتبى', title: 'صلوات الله عليه', badge: 'الإمام الثاني', birthDate: '15 رمضان', birthPlace: 'المدينة المنورة', martyrDate: '7 صفر', martyrPlace: 'المدينة المنورة', martyrReason: 'السمّ على يد زوجته جعدة' },
+            { id: 'hussein', name: 'الإمام الحسين سيد الشهداء', title: 'صلوات الله عليه', badge: 'الإمام الثالث', birthDate: '3 شعبان', birthPlace: 'المدينة المنورة', martyrDate: '10 محرم', martyrPlace: 'كربلاء', martyrReason: 'الاستشهاد في معركة الطف' },
+            { id: 'sajjad', name: 'الإمام زين العابدين', title: 'صلوات الله عليه', badge: 'الإمام الرابع', birthDate: '5 شعبان', birthPlace: 'المدينة المنورة', martyrDate: '25 محرم', martyrPlace: 'المدينة المنورة', martyrReason: 'السمّ على يد الوليد بن عبد الملك' },
+            { id: 'baqir', name: 'الإمام محمد الباقر', title: 'صلوات الله عليه', badge: 'الإمام الخامس', birthDate: '1 رجب', birthPlace: 'المدينة المنورة', martyrDate: '7 ذو الحجة', martyrPlace: 'المدينة المنورة', martyrReason: 'السمّ على يد هشام بن عبد الملك' },
+            { id: 'sadiq', name: 'الإمام جعفر الصادق', title: 'صلوات الله عليه', badge: 'الإمام السادس', birthDate: '17 ربيع الأول', birthPlace: 'المدينة المنورة', martyrDate: '25 شوال', martyrPlace: 'المدينة المنورة', martyrReason: 'السمّ على يد المنصور الدوانقي' },
+            { id: 'kadhim', name: 'الإمام موسى الكاظم', title: 'صلوات الله عليه', badge: 'الإمام السابع', birthDate: '7 صفر', birthPlace: 'الأبواء', martyrDate: '25 رجب', martyrPlace: 'بغداد', martyrReason: 'السمّ في السجن على يد هارون الرشيد' },
+            { id: 'rida', name: 'الإمام علي بن موسى الرضا', title: 'صلوات الله عليه', badge: 'الإمام الثامن', birthDate: '11 ذو القعدة', birthPlace: 'المدينة المنورة', martyrDate: '17 صفر', martyrPlace: 'طوس (مشهد)', martyrReason: 'السمّ على يد المأمون العباسي' },
+            { id: 'jawad', name: 'الإمام محمد الجواد', title: 'صلوات الله عليه', badge: 'الإمام التاسع', birthDate: '10 رجب', birthPlace: 'المدينة المنورة', martyrDate: '29 ذو القعدة', martyrPlace: 'بغداد', martyrReason: 'السمّ على يد المعتصم العباسي' },
+            { id: 'hadi', name: 'الإمام علي الهادي', title: 'صلوات الله عليه', badge: 'الإمام العاشر', birthDate: '15 ذو الحجة', birthPlace: 'المدينة المنورة', martyrDate: '3 رجب', martyrPlace: 'سامراء', martyrReason: 'السمّ على يد المعتز العباسي' },
+            { id: 'askari', name: 'الإمام الحسن العسكري', title: 'صلوات الله عليه', badge: 'الإمام الحادي عشر', birthDate: '8 ربيع الثاني', birthPlace: 'المدينة المنورة', martyrDate: '8 ربيع الأول', martyrPlace: 'سامراء', martyrReason: 'السمّ على يد المعتضد العباسي' },
+            { id: 'mahdi', name: 'الإمام المهدي', title: 'عجل الله فرجه', badge: 'الإمام الثاني عشر', birthDate: '15 شعبان', birthPlace: 'سامراء', martyrDate: 'حياً غائباً', martyrPlace: 'في غيبته', martyrReason: 'في غيبته الكبرى' }
+        ];
+
+        const prayerData = [
+            { id: 'fajr', title: 'صلاة الصبح', icon: 'ف', rakaat: '2 ركعات' },
+            { id: 'dhuhr', title: 'صلاة الظهر والعصر', icon: 'ظ', rakaat: '4 + 4 ركعات' },
+            { id: 'maghrib', title: 'صلاة المغرب', icon: 'م', rakaat: '3 ركعات' },
+            { id: 'isha', title: 'صلاة العشاء', icon: 'ع', rakaat: '4 ركعات' }
+        ];
+
+        const tasbihData = [
+            { id: 'fatima-tasbih', title: 'تسبيحات فاطمة الزهراء', icon: 'ت', desc: '100 تسبيحة' },
+            { id: 'thaqalayn', title: 'حديث الثقلين', icon: 'ث', desc: 'من أحاديث النبي' },
+            { id: 'ghadir', title: 'حديث الغدير', icon: 'غ', desc: 'يوم الغدير الخالد' }
+        ];
+
+        const prayerContent = {
+            'fajr': {
+                title: 'صلاة الصبح',
+                content: `
+                    <p>صلاة الصبح هي أول الصلوات اليومية، وهي ركعتان، وقتها من طلوع الفجر إلى طلوع الشمس.</p>
+                    
+                    <div class="prayer-step">
+                        <h4 class="prayer-step-title"><span class="prayer-step-number">1</span>النية</h4>
+                        <p class="prayer-step-content">أُصلِّي صلاة الصبح ركعتين قربة إلى الله تعالى.</p>
+                    </div>
+                    
+                    <div class="prayer-step">
+                        <h4 class="prayer-step-title"><span class="prayer-step-number">2</span>تكبيرة الإحرام</h4>
+                        <p class="prayer-arabic">الله أكبر</p>
+                    </div>
+                    
+                    <div class="prayer-step">
+                        <h4 class="prayer-step-title"><span class="prayer-step-number">3</span>قراءة الحمد وسورة</h4>
+                        <p class="prayer-arabic">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ ۝ الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ ۝ الرَّحْمَٰنِ الرَّحِيمِ ۝ مَالِكِ يَوْمِ الدِّينِ ۝ إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ ۝ اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ ۝ صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ</p>
+                    </div>
+                    
+                    <div class="prayer-step">
+                        <h4 class="prayer-step-title"><span class="prayer-step-number">4</span>الركوع</h4>
+                        <p class="prayer-arabic">سُبْحانَ رَبِّيَ الْعَظيمِ وَبِحَمْدِهِ</p>
+                    </div>
+                    
+                    <div class="prayer-step">
+                        <h4 class="prayer-step-title"><span class="prayer-step-number">5</span>السجود</h4>
+                        <p class="prayer-arabic">سُبْحانَ رَبِّيَ الْأَعْلى وَبِحَمْدِهِ</p>
+                    </div>
+                    
+                    <div class="prayer-step">
+                        <h4 class="prayer-step-title"><span class="prayer-step-number">6</span>التشهد</h4>
+                        <p class="prayer-arabic">أَشْهَدُ أَنْ لا إِلهَ إِلاَّ اللَّهُ وَحْدَهُ لا شَريكَ لَهُ، وَأَشْهَدُ أَنَّ مُحَمَّداً عَبْدُهُ وَرَسُولُهُ، وَأَشْهَدُ أَنَّ عَلِيًّا وَلِيُّ اللَّهِ، اَللّهُمَّ صَلِّ عَلى مُحَمَّدٍ وَآلِ مُحَمَّدٍ</p>
+                    </div>
+                    
+                    <div class="prayer-step">
+                        <h4 class="prayer-step-title"><span class="prayer-step-number">7</span>السلام</h4>
+                        <p class="prayer-arabic">السَّلامُ عَلَيْكَ أَيُّهَا النَّبِيُّ وَرَحْمَةُ اللَّهِ وَبَرَكاتُهُ، السَّلامُ عَلَيْنا وَعَلى عِبادِ اللَّهِ الصّالِحينَ، السَّلامُ عَلَيْكُمْ وَرَحْمَةُ اللَّهِ وَبَرَكاتُهُ</p>
+                    </div>
+                `
+            },
+            'dhuhr': {
+                title: 'صلاة الظهر والعصر',
+                content: `
+                    <p>صلاة الظهر أربع ركعات، ووقتها من زوال الشمس إلى أن يصير ظل كل شيء مثله. صلاة العصر أربع ركعات، ووقتها بعد صلاة الظهر إلى الغروب.</p>
+                    
+                    <div class="prayer-step">
+                        <h4 class="prayer-step-title"><span class="prayer-step-number">1</span>النية</h4>
+                        <p class="prayer-step-content">أُصلِّي صلاة الظهر أربع ركعات قربة إلى الله تعالى.</p>
+                    </div>
+                    
+                    <div class="prayer-step">
+                        <h4 class="prayer-step-title"><span class="prayer-step-number">2</span>تكبيرة الإحرام</h4>
+                        <p class="prayer-arabic">الله أكبر</p>
+                    </div>
+                    
+                    <div class="prayer-step">
+                        <h4 class="prayer-step-title"><span class="prayer-step-number">3</span>الركعتان الأوليان</h4>
+                        <p class="prayer-step-content">قراءة الحمد وسورة في كل ركعة، مع الركوع والسجود.</p>
+                    </div>
+                    
+                    <div class="prayer-step">
+                        <h4 class="prayer-step-title"><span class="prayer-step-number">4</span>الركعتان الأخيرتان</h4>
+                        <p class="prayer-step-content">قراءة الحمد فقط أو مع سورة قصيرة، ثم الركوع والسجود.</p>
+                    </div>
+                    
+                    <div class="prayer-step">
+                        <h4 class="prayer-step-title"><span class="prayer-step-number">5</span>التشهد والسلام</h4>
+                        <p class="prayer-arabic">أَشْهَدُ أَنْ لا إِلهَ إِلاَّ اللَّهُ وَحْدَهُ لا شَريكَ لَهُ، وَأَشْهَدُ أَنَّ مُحَمَّداً عَبْدُهُ وَرَسُولُهُ، وَأَشْهَدُ أَنَّ عَلِيًّا وَلِيُّ اللَّهِ، اَللّهُمَّ صَلِّ عَلى مُحَمَّدٍ وَآلِ مُحَمَّدٍ</p>
+                    </div>
+                    
+                    <div class="detail-section">
+                        <h3 class="detail-section-title">صلاة العصر</h3>
+                        <p>نفس طريقة صلاة الظهر، مع تغيير النية إلى صلاة العصر.</p>
+                    </div>
+                `
+            },
+            'maghrib': {
+                title: 'صلاة المغرب',
+                content: `
+                    <p>صلاة المغرب ثلاث ركعات، ووقتها من غروب الشمس إلى ذهاب الشفق الأحمر.</p>
+                    
+                    <div class="prayer-step">
+                        <h4 class="prayer-step-title"><span class="prayer-step-number">1</span>النية</h4>
+                        <p class="prayer-step-content">أُصلِّي صلاة المغرب ثلاث ركعات قربة إلى الله تعالى.</p>
+                    </div>
+                    
+                    <div class="prayer-step">
+                        <h4 class="prayer-step-title"><span class="prayer-step-number">2</span>تكبيرة الإحرام</h4>
+                        <p class="prayer-arabic">الله أكبر</p>
+                    </div>
+                    
+                    <div class="prayer-step">
+                        <h4 class="prayer-step-title"><span class="prayer-step-number">3</span>الركعتان الأوليان</h4>
+                        <p class="prayer-step-content">قراءة الحمد وسورة في كل ركعة، مع الركوع والسجود.</p>
+                    </div>
+                    
+                    <div class="prayer-step">
+                        <h4 class="prayer-step-title"><span class="prayer-step-number">4</span>الركعة الثالثة</h4>
+                        <p class="prayer-step-content">قراءة الحمد فقط أو مع سورة، ثم الركوع والسجود.</p>
+                    </div>
+                    
+                    <div class="prayer-step">
+                        <h4 class="prayer-step-title"><span class="prayer-step-number">5</span>التشهد والسلام</h4>
+                        <p class="prayer-arabic">أَشْهَدُ أَنْ لا إِلهَ إِلاَّ اللَّهُ وَحْدَهُ لا شَريكَ لَهُ، وَأَشْهَدُ أَنَّ مُحَمَّداً عَبْدُهُ وَرَسُولُهُ، وَأَشْهَدُ أَنَّ عَلِيًّا وَلِيُّ اللَّهِ، اَللّهُمَّ صَلِّ عَلى مُحَمَّدٍ وَآلِ مُحَمَّدٍ</p>
+                    </div>
+                `
+            },
+            'isha': {
+                title: 'صلاة العشاء',
+                content: `
+                    <p>صلاة العشاء أربع ركعات، ووقتها من بعد ذهاب الشفق الأحمر إلى منتصف الليل.</p>
+                    
+                    <div class="prayer-step">
+                        <h4 class="prayer-step-title"><span class="prayer-step-number">1</span>النية</h4>
+                        <p class="prayer-step-content">أُصلِّي صلاة العشاء أربع ركعات قربة إلى الله تعالى.</p>
+                    </div>
+                    
+                    <div class="prayer-step">
+                        <h4 class="prayer-step-title"><span class="prayer-step-number">2</span>تكبيرة الإحرام</h4>
+                        <p class="prayer-arabic">الله أكبر</p>
+                    </div>
+                    
+                    <div class="prayer-step">
+                        <h4 class="prayer-step-title"><span class="prayer-step-number">3</span>الركعتان الأوليان</h4>
+                        <p class="prayer-step-content">قراءة الحمد وسورة في كل ركعة، مع الركوع والسجود.</p>
+                    </div>
+                    
+                    <div class="prayer-step">
+                        <h4 class="prayer-step-title"><span class="prayer-step-number">4</span>الركعتان الأخيرتان</h4>
+                        <p class="prayer-step-content">قراءة الحمد فقط أو مع سورة قصيرة، ثم الركوع والسجود.</p>
+                    </div>
+                    
+                    <div class="prayer-step">
+                        <h4 class="prayer-step-title"><span class="prayer-step-number">5</span>التشهد والسلام</h4>
+                        <p class="prayer-arabic">أَشْهَدُ أَنْ لا إِلهَ إِلاَّ اللَّهُ وَحْدَهُ لا شَريكَ لَهُ، وَأَشْهَدُ أَنَّ مُحَمَّداً عَبْدُهُ وَرَسُولُهُ، وَأَشْهَدُ أَنَّ عَلِيًّا وَلِيُّ اللَّهِ، اَللّهُمَّ صَلِّ عَلى مُحَمَّدٍ وَآلِ مُحَمَّدٍ</p>
+                    </div>
+                `
+            }
+        };
+
+        const tasbihContent = {
+            'fatima-tasbih': {
+                title: 'تسبيحات فاطمة الزهراء',
+                content: `
+                    <p>التسبيحات الفاطمية هي ذكر ورد به النبي محمد صلى الله عليه وآله ابنته فاطمة الزهراء صلوات الله عليها.</p>
+                    
+                    <div class="tasbih-container">
+                        <p class="tasbih-dhikr">الله أكبر</p>
+                        <div class="tasbih-display" id="counter-allahu-akbar">0</div>
+                        <p class="prayer-step-content" style="text-align: center; margin-bottom: 14px;">34 مرة</p>
+                        <div class="tasbih-buttons">
+                            <button class="tasbih-btn tasbih-btn-primary" onclick="incrementCounter('counter-allahu-akbar', 34)">عدّ</button>
+                            <button class="tasbih-btn tasbih-btn-secondary" onclick="resetCounter('counter-allahu-akbar')">إعادة</button>
+                        </div>
+                    </div>
+                    
+                    <div class="tasbih-container">
+                        <p class="tasbih-dhikr">الحمد لله</p>
+                        <div class="tasbih-display" id="counter-alhamdulillah">0</div>
+                        <p class="prayer-step-content" style="text-align: center; margin-bottom: 14px;">33 مرة</p>
+                        <div class="tasbih-buttons">
+                            <button class="tasbih-btn tasbih-btn-primary" onclick="incrementCounter('counter-alhamdulillah', 33)">عدّ</button>
+                            <button class="tasbih-btn tasbih-btn-secondary" onclick="resetCounter('counter-alhamdulillah')">إعادة</button>
+                        </div>
+                    </div>
+                    
+                    <div class="tasbih-container">
+                        <p class="tasbih-dhikr">سبحان الله</p>
+                        <div class="tasbih-display" id="counter-subhanallah">0</div>
+                        <p class="prayer-step-content" style="text-align: center; margin-bottom: 14px;">33 مرة</p>
+                        <div class="tasbih-buttons">
+                            <button class="tasbih-btn tasbih-btn-primary" onclick="incrementCounter('counter-subhanallah', 33)">عدّ</button>
+                            <button class="tasbih-btn tasbih-btn-secondary" onclick="resetCounter('counter-subhanallah')">إعادة</button>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-section">
+                        <h3 class="detail-section-title">فضل التسبيحات</h3>
+                        <p>قال النبي محمد صلى الله عليه وآله: "ما عُبد الله بشيء أفضل منه".</p>
+                    </div>
+                `
+            },
+            'thaqalayn': {
+                title: 'حديث الثقلين',
+                content: `
+                    <div class="hadith-box">
+                        <p class="hadith-text">إِنِّي تَارِكٌ فِيكُمُ الثَّقَلَيْنِ: كِتَابَ اللَّهِ وَعِتْرَتِي أَهْلَ بَيْتِي، وَإِنَّهُمَا لَنْ يَفْتَرِقَا حَتَّى يَرِدَا عَلَيَّ الْحَوْضَ</p>
+                        <p class="hadith-source">النبي محمد صلى الله عليه وآله</p>
+                    </div>
+                    
+                    <div class="detail-section">
+                        <h3 class="detail-section-title">شرح الحديث</h3>
+                        <p><strong>الثقلان:</strong> القرآن الكريم والعترة الطاهرة (أهل البيت عليهم السلام).</p>
+                        <p><strong>لن يفترقا:</strong> العترة هي المفسرة للقرآن، والقرآن دليل على إمامة العترة.</p>
+                    </div>
+                `
+            },
+            'ghadir': {
+                title: 'حديث الغدير',
+                content: `
+                    <div class="hadith-box">
+                        <p class="hadith-text">مَنْ كُنْتُ مَوْلَاهُ فَهَذَا عَلِيٌّ مَوْلَاهُ، اللَّهُمَّ وَالِ مَنْ وَالَاهُ، وَعَادِ مَنْ عَادَاهُ</p>
+                        <p class="hadith-source">النبي محمد صلى الله عليه وآله - يوم الغدير 18 ذو الحجة</p>
+                    </div>
+                    
+                    <div class="detail-section">
+                        <h3 class="detail-section-title">سبب الحديث</h3>
+                        <p>نزلت الآية: {يَا أَيُّهَا الرَّسُولُ بَلِّغْ مَا أُنزِلَ إِلَيْكَ مِن رَّبِّكَ}، فجمع النبي صلى الله عليه وآله الناس وأعلن ولاية الإمام علي عليه السلام.</p>
+                    </div>
+                `
+            }
+        };
+
+        let counters = {
+            'counter-allahu-akbar': 0,
+            'counter-alhamdulillah': 0,
+            'counter-subhanallah': 0
+        };
+
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            
+            const page = document.getElementById('page-' + pageId);
+            if (page) page.classList.add('active');
+            
+            const navItem = document.querySelector(`[data-nav="${pageId}"]`);
+            if (navItem) navItem.classList.add('active');
+            
+            window.scrollTo(0, 0);
+        }
+
+        function showDetail(title, content) {
+            const detailContent = document.getElementById('detail-content');
+            detailContent.innerHTML = `
+                <button class="back-btn" onclick="history.back()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 12H5M12 19l-7-7 7-7"/>
+                    </svg>
+                    رجوع
+                </button>
+                <div class="detail-header">
+                    <h2 class="detail-title">${title}</h2>
+                </div>
+                <div class="detail-body">${content}</div>
+            `;
+            
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page-detail').classList.add('active');
+            window.scrollTo(0, 0);
+        }
+
+        function showMasumDetail(masum) {
+            const detailContent = document.getElementById('detail-content');
+            detailContent.innerHTML = `
+                <button class="back-btn" onclick="history.back()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 12H5M12 19l-7-7 7-7"/>
+                    </svg>
+                    رجوع
+                </button>
+                
+                <div class="masum-card">
+                    <div class="masum-header">
+                        <h2 class="masum-name">${masum.name}</h2>
+                        <span class="masum-title-badge">${masum.title}</span>
+                    </div>
+                    <div class="masum-body">
+                        <div class="masum-info-row">
+                            <span class="masum-info-label">الكنية:</span>
+                            <span class="masum-info-value">${masum.badge}</span>
+                        </div>
+                        <div class="masum-info-row">
+                            <span class="masum-info-label">تاريخ الولادة:</span>
+                            <span class="masum-info-value">${masum.birthDate}</span>
+                        </div>
+                        <div class="masum-info-row">
+                            <span class="masum-info-label">مكان الولادة:</span>
+                            <span class="masum-info-value">${masum.birthPlace}</span>
+                        </div>
+                        <div class="masum-info-row">
+                            <span class="masum-info-label">تاريخ الشهادة:</span>
+                            <span class="masum-info-value">${masum.martyrDate}</span>
+                        </div>
+                        <div class="masum-info-row">
+                            <span class="masum-info-label">مكان الشهادة:</span>
+                            <span class="masum-info-value">${masum.martyrPlace}</span>
+                        </div>
+                        <div class="masum-info-row">
+                            <span class="masum-info-label">سبب الشهادة:</span>
+                            <span class="masum-info-value">${masum.martyrReason}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page-detail').classList.add('active');
+            window.scrollTo(0, 0);
+        }
+
+        function incrementCounter(counterId, max) {
+            if (counters[counterId] < max) {
+                counters[counterId]++;
+                const el = document.getElementById(counterId);
+                if (el) {
+                    el.textContent = counters[counterId];
+                    el.style.transform = 'scale(1.1)';
+                    setTimeout(() => el.style.transform = 'scale(1)', 100);
+                }
+            }
+        }
+
+        function resetCounter(counterId) {
+            counters[counterId] = 0;
+            const el = document.getElementById(counterId);
+            if (el) el.textContent = '0';
+        }
+
+        function renderList(containerId, data, isMasum = false) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            
+            container.innerHTML = data.map(item => `
+                <div class="list-item" data-id="${item.id}">
+                    <div class="list-item-icon">${item.icon || ''}</div>
+                    <div class="list-item-content">
+                        <div class="list-item-title">${item.name || item.title}</div>
+                        <div class="list-item-desc">${item.desc || item.badge || item.rakaat || ''}</div>
+                    </div>
+                    <svg class="list-item-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M15 18l-6-6 6-6"/>
+                    </svg>
+                </div>
+            `).join('');
+            
+            container.querySelectorAll('.list-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    const id = item.dataset.id;
+                    const found = data.find(d => d.id === id);
+                    if (found) {
+                        if (isMasum) {
+                            showMasumDetail(found);
+                        } else if (prayerContent[id]) {
+                            showDetail(prayerContent[id].title, prayerContent[id].content);
+                        } else if (tasbihContent[id]) {
+                            showDetail(tasbihContent[id].title, tasbihContent[id].content);
+                        } else if (found.content) {
+                            showDetail(found.title, found.content);
+                        }
+                    }
+                });
+            });
+        }
+
+        function search(query) {
+            const resultsContainer = document.getElementById('searchResults');
+            if (!query.trim()) {
+                resultsContainer.innerHTML = '<p style="text-align: center; color: var(--text-muted); padding: 40px;">اكتب كلمة للبحث...</p>';
+                return;
+            }
+            
+            const allData = [...usulData, ...furuData, ...masuminData, ...prayerData, ...tasbihData];
+            const results = allData.filter(item => 
+                (item.title || item.name || '').includes(query) || 
+                (item.desc || item.badge || '').includes(query)
+            );
+            
+            if (results.length === 0) {
+                resultsContainer.innerHTML = '<p style="text-align: center; color: var(--text-muted); padding: 40px;">لا توجد نتائج</p>';
+                return;
+            }
+            
+            resultsContainer.innerHTML = results.slice(0, 15).map(item => `
+                <div class="search-result-item">
+                    <div class="search-result-title">${item.name || item.title}</div>
+                    <div class="search-result-preview">${item.desc || item.badge || item.rakaat || ''}</div>
+                </div>
+            `).join('');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderList('usul-list', usulData);
+            renderList('furu-list', furuData);
+            renderList('masumin-list', masuminData, true);
+            renderList('prayer-list', prayerData);
+            renderList('tasbih-list', tasbihData);
+            
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', () => showPage(item.dataset.nav));
+            });
+            
+            document.getElementById('searchBtn').addEventListener('click', () => {
+                document.getElementById('searchContainer').classList.add('active');
+                document.getElementById('searchInput').focus();
+            });
+            
+            document.getElementById('closeSearch').addEventListener('click', () => {
+                document.getElementById('searchContainer').classList.remove('active');
+                document.getElementById('searchInput').value = '';
+            });
+            
+            document.getElementById('searchInput').addEventListener('input', (e) => search(e.target.value));
+            
+            window.addEventListener('popstate', () => showPage('home'));
+        });
+    </script>
 </body>
 </html>
